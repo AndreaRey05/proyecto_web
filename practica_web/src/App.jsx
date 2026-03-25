@@ -18,7 +18,7 @@ function App() {
         <div>
           <h1>Get started</h1>
           <p>
-            Edit <code>src/App.jsx</code> and save to test  a ver checs esto <code>HMR</code>
+            Edit <code>src/App.jsx</code> and save to test holaaa<code>HMR</code>
           </p>
         </div>
         <button
