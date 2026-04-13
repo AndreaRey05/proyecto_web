@@ -15,7 +15,7 @@ function LoginAlumno() {
 
         if (modo === 'login') {
             try {
-                const res = await fetch('${API_URL}/api/auth/login', {
+                const res = await fetch(`${API_URL}/api/auth/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -35,7 +35,7 @@ function LoginAlumno() {
 
         } else {
             try {
-                const res = await fetch('${API_URL}/api/auth/registro-alumno', {
+                const res = await fetch(`${API_URL}/api/auth/registro-alumno`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({

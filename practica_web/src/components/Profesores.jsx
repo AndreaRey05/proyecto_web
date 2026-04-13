@@ -8,7 +8,7 @@ function Profesores({ rol }) {
 
     useEffect(() => {
         const token = localStorage.getItem('token')
-        fetch('${API_URL}/api/profesores', {
+        fetch(`${API_URL}/api/profesores`, {
             headers: { Authorization: `Bearer ${token}` }
         })
         .then(r => r.json())
