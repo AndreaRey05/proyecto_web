@@ -10,15 +10,64 @@ function Login() {
     const [nombre, setNombre] = useState('');
     const navigate = useNavigate();
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        if (modo === 'login') {
-            console.log('Login:', { ncuenta, nip });
+    const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (modo === 'login') {
+        try {
+            const res = await fetch('http://localhost:3000/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    num_cuenta: parseInt(ncuenta),
+                    contra: nip,
+                    rol: 'profesor'   // por ahora fijo, luego puedes agregar selector
+                })
+            });
+
+            const data = await res.json();
+
+            if (!res.ok)
+                return alert(data.error);
+
+            // Guarda el token para usarlo en las demás páginas
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('rol', data.rol);
+
             navigate('/dashboard');
-        } else {
-            console.log('Sign In:', { nombre, ncuenta, nip, entrada, salida });
+
+        } catch (error) {
+            alert('Error al conectar con el servidor');
         }
-    };
+
+    } else {
+        // SIGN IN — registro de profesor
+        try {
+            const res = await fetch('http://localhost:3000/api/auth/registro', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    num_cuenta: parseInt(ncuenta),
+                    nombre,
+                    contra: nip,
+                    hora_entrada: entrada,
+                    hora_salida: salida
+                })
+            });
+
+            const data = await res.json();
+
+            if (!res.ok)
+                return alert(data.error);
+
+            alert('Registro exitoso, ahora puedes iniciar sesión');
+            setModo('login');
+
+        } catch (error) {
+            alert('Error al conectar con el servidor');
+        }
+    }
+};
 
     return (
         <div className="min-h-screen bg-[#FFFFFF] flex items-center justify-center">

@@ -43,4 +43,33 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = { login };
+const registro = async (req, res) => {
+  const { num_cuenta, nombre, contra, hora_entrada, hora_salida } = req.body;
+
+  try {
+    // Verificar si ya existe
+    const [existe] = await db.query(
+      'SELECT * FROM profesor WHERE num_cuenta = ?', [num_cuenta]
+    );
+    if (existe.length > 0)
+      return res.status(400).json({ error: 'El número de cuenta ya está registrado' });
+
+    // Encriptar contraseña
+    const salt = await bcrypt.genSalt(10);
+    const hashContra = await bcrypt.hash(contra, salt);
+
+    // Insertar en BD
+    await db.query(
+      'INSERT INTO profesor (num_cuenta, nombre, contra, hora_entrada, hora_salida) VALUES (?, ?, ?, ?, ?)',
+      [num_cuenta, nombre, hashContra, hora_entrada, hora_salida]
+    );
+
+    res.status(201).json({ mensaje: 'Profesor registrado correctamente' });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al registrar' });
+  }
+};
+
+module.exports = { login, registro };
