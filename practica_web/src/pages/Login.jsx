@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import uaeh from '../assets/uaeh.png';
 import { useNavigate } from 'react-router-dom';
+import API_URL from '../config'
+
 function Login() {
     const [modo, setModo] = useState('login');
     const [ncuenta, setncuenta] = useState('');
@@ -15,7 +17,7 @@ function Login() {
 
     if (modo === 'login') {
         try {
-            const res = await fetch('http://localhost:3000/api/auth/login', {
+            const res = await fetch('${API_URL}/api/auth/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -39,7 +41,7 @@ function Login() {
     } else {
         // SIGN IN — registro de profesor
         try {
-            const res = await fetch('http://localhost:3000/api/auth/registro', {
+            const res = await fetch('${API_URL}/api/auth/registro', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

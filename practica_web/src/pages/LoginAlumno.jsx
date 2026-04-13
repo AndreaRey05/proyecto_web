@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import uaeh from '../assets/uaeh.png'
 import { useNavigate } from 'react-router-dom'
+import API_URL from '../config'
+
 
 function LoginAlumno() {
     const [modo, setModo] = useState('login')
@@ -13,7 +15,7 @@ function LoginAlumno() {
 
         if (modo === 'login') {
             try {
-                const res = await fetch('http://localhost:3000/api/auth/login', {
+                const res = await fetch('${API_URL}/api/auth/login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -33,7 +35,7 @@ function LoginAlumno() {
 
         } else {
             try {
-                const res = await fetch('http://localhost:3000/api/auth/registro-alumno', {
+                const res = await fetch('${API_URL}/api/auth/registro-alumno', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({

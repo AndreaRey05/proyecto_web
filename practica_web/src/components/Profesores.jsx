@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import API_URL from '../config'
 
 function Profesores({ rol }) {
     const [profesores, setProfesores] = useState([])
@@ -7,7 +8,7 @@ function Profesores({ rol }) {
 
     useEffect(() => {
         const token = localStorage.getItem('token')
-        fetch('http://localhost:3000/api/profesores', {
+        fetch('${API_URL}/api/profesores', {
             headers: { Authorization: `Bearer ${token}` }
         })
         .then(r => r.json())
@@ -28,7 +29,7 @@ function Profesores({ rol }) {
     const handleEliminar = async (num_cuenta) => {
         if (!confirm('¿Seguro que deseas eliminar este profesor?')) return
         const token = localStorage.getItem('token')
-        const res = await fetch(`http://localhost:3000/api/profesores/${num_cuenta}`, {
+        const res = await fetch(`${API_URL}/api/profesores/${num_cuenta}`, {
             method: 'DELETE',
             headers: { Authorization: `Bearer ${token}` }
         })

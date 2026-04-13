@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react'
+import API_URL from '../config'
+
 
 // Calendario pequeño
 function Calendario() {
@@ -108,7 +110,7 @@ function Home({ rol }) {
 
     useEffect(() => {
         const token = localStorage.getItem('token')
-        fetch('http://localhost:3000/api/horario', {
+        fetch('${API_URL}/api/horario', {
             headers: { Authorization: `Bearer ${token}` }
         })
         .then(r => r.json())
