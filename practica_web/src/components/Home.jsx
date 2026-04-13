@@ -110,7 +110,7 @@ function Home({ rol }) {
 
     useEffect(() => {
         const token = localStorage.getItem('token')
-        fetch('${API_URL}/api/horario', {
+        fetch(`${API_URL}/api/horario`, {
             headers: { Authorization: `Bearer ${token}` }
         })
         .then(r => r.json())

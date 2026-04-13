@@ -17,7 +17,7 @@ function Login() {
 
     if (modo === 'login') {
         try {
-            const res = await fetch('${API_URL}/api/auth/login', {
+            const res = await fetch(`${API_URL}/api/auth/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -41,7 +41,7 @@ function Login() {
     } else {
         // SIGN IN — registro de profesor
         try {
-            const res = await fetch('${API_URL}/api/auth/registro', {
+            const res = await fetch(`${API_URL}/api/auth/registro`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

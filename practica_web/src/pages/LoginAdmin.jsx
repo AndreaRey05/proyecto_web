@@ -17,7 +17,7 @@ function LoginAdmin() {
 
         if (modo === 'login') {
             try {
-                const res = await fetch('${API_URL}/api/auth/login', {
+                const res = await fetch(`${API_URL}/api/auth/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -37,7 +37,7 @@ function LoginAdmin() {
 
         } else {
             try {
-                const res = await fetch('${API_URL}/api/auth/registro-admin', {
+                const res = await fetch(`${API_URL}/api/auth/registro-admin`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
