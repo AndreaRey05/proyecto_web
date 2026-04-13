@@ -11,7 +11,7 @@ function Login() {
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
 
     if (modo === 'login') {
         try {
@@ -21,23 +21,19 @@ function Login() {
                 body: JSON.stringify({
                     num_cuenta: parseInt(ncuenta),
                     contra: nip,
-                    rol: 'profesor'   // por ahora fijo, luego puedes agregar selector
+                    rol: 'profesor'
                 })
-            });
+            })
 
-            const data = await res.json();
+            const data = await res.json()
+            if (!res.ok) return alert(data.error)
 
-            if (!res.ok)
-                return alert(data.error);
-
-            // Guarda el token para usarlo en las demás páginas
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('rol', data.rol);
-
-            navigate('/dashboard');
+            localStorage.setItem('token', data.token)
+            localStorage.setItem('rol', data.rol)
+            navigate('/dashboard')
 
         } catch (error) {
-            alert('Error al conectar con el servidor');
+            alert('Error al conectar con el servidor')
         }
 
     } else {
@@ -53,18 +49,16 @@ function Login() {
                     hora_entrada: entrada,
                     hora_salida: salida
                 })
-            });
+            })
 
-            const data = await res.json();
+            const data = await res.json()
+            if (!res.ok) return alert(data.error)
 
-            if (!res.ok)
-                return alert(data.error);
-
-            alert('Registro exitoso, ahora puedes iniciar sesión');
-            setModo('login');
+            alert('Registro exitoso, ahora puedes iniciar sesión')
+            setModo('login')
 
         } catch (error) {
-            alert('Error al conectar con el servidor');
+            alert('Error al conectar con el servidor')
         }
     }
 };

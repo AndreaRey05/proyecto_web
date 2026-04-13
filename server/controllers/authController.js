@@ -71,5 +71,57 @@ const registro = async (req, res) => {
     res.status(500).json({ error: 'Error al registrar' });
   }
 };
+const registroAlumno = async (req, res) => {
+  const { num_cuenta, contra } = req.body;
 
-module.exports = { login, registro };
+  try {
+    const [existe] = await db.query(
+      'SELECT * FROM alumno WHERE num_cuenta = ?', [num_cuenta]
+    );
+    if (existe.length > 0)
+      return res.status(400).json({ error: 'El número de cuenta ya está registrado' });
+
+    const salt = await bcrypt.genSalt(10);
+    const hashContra = await bcrypt.hash(contra, salt);
+
+    await db.query(
+      'INSERT INTO alumno (num_cuenta, contra) VALUES (?, ?)',
+      [num_cuenta, hashContra]
+    );
+
+    res.status(201).json({ mensaje: 'Alumno registrado correctamente' });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al registrar alumno' });
+  }
+};
+
+const registroAdmin = async (req, res) => {
+  const { num_administrador, nombre, email, contra } = req.body;
+
+  try {
+    const [existe] = await db.query(
+      'SELECT * FROM administrador WHERE num_administrador = ?', [num_administrador]
+    );
+    if (existe.length > 0)
+      return res.status(400).json({ error: 'El administrador ya está registrado' });
+
+    const salt = await bcrypt.genSalt(10);
+    const hashContra = await bcrypt.hash(contra, salt);
+
+    await db.query(
+      'INSERT INTO administrador (num_administrador, nombre, email, contra) VALUES (?, ?, ?, ?)',
+      [num_administrador, nombre, email, hashContra]
+    );
+
+    res.status(201).json({ mensaje: 'Administrador registrado correctamente' });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al registrar administrador' });
+  }
+};
+
+module.exports = { login, registro, registroAlumno, registroAdmin };
+

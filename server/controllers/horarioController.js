@@ -11,7 +11,7 @@ const getHorario = async (req, res) => {
         s.nombre    AS salon,
         s.capacidad,
         p.nombre    AS profesor,
-        p.hora_entrada,,
+        p.hora_entrada,
         p.hora_salida,
         g.nombre    AS grupo,
         g.semestre,
