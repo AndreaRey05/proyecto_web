@@ -25,3 +25,4 @@ dist-ssr
 
 # Ignorar variables de entorno
 .env
+!.env.example        # ← esta línea asegura que .env.example SÍ se suba

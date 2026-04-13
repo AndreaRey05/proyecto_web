@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import uaeh from '../assets/uaeh.png'
+import API_URL from '../config'
 
 function AccesoGeneral() {
     const navigate = useNavigate()
