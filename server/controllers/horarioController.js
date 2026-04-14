@@ -35,4 +35,18 @@ const getHorario = async (req, res) => {
   }
 };
 
-module.exports = { getHorario };
+const addClase = async (req, res) => {
+    const { id_grupo, id_profesor, id_materia, id_salon, dia, hora_inicio, hora_fin } = req.body
+    try {
+        await db.query(
+            'INSERT INTO clase (id_grupo, id_profesor, id_materia, id_salon, dia, hora_inicio, hora_fin) VALUES (?,?,?,?,?,?,?)',
+            [id_grupo, id_profesor, id_materia, id_salon, dia, hora_inicio, hora_fin]
+        )
+        res.status(201).json({ mensaje: 'Clase agregada' })
+    } catch (error) {
+        console.error(error)
+        res.status(500).json({ error: 'Error al agregar clase' })
+    }
+}
+
+module.exports = { getHorario, addClase };

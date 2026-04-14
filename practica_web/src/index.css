@@ -1,3 +1,43 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.fc-timegrid-col {
+    min-width: 140px !important;
+}
+/* Eventos del calendario */
+.fc-event {
+    border-radius: 8px !important;
+    border: none !important;
+    padding: 2px 4px !important;
+    font-size: 12px !important;
+}
+
+.fc-timegrid-event-harness {
+    margin-right: 2px !important;
+}
+
+/* Colores distintos por evento */
+.fc-event:nth-child(1) { background-color: #3b82f6 !important; }
+.fc-event:nth-child(2) { background-color: #8b5cf6 !important; }
+.fc-event:nth-child(3) { background-color: #10b981 !important; }
+.fc-event:nth-child(4) { background-color: #f59e0b !important; }
+.fc-event:nth-child(5) { background-color: #ef4444 !important; }
+
+/* Cabecera días */
+.fc-col-header-cell {
+    background-color: #f8f8f8 !important;
+    padding: 8px 0 !important;
+    font-weight: bold !important;
+    color: #374151 !important;
+}
+
+/* Líneas de hora */
+.fc-timegrid-slot {
+    height: 50px !important;
+}
+
+/* Quitar borde azul de hoy */
+.fc-day-today {
+    background-color: transparent !important;
+}

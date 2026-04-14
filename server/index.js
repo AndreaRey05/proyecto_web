@@ -5,6 +5,11 @@ require('dotenv').config();
 const authRoutes    = require('./routes/authRoutes');
 const horarioRoutes = require('./routes/horarioRoutes');
 const profesorRoutes = require('./routes/profesorRoutes')
+const salonRoutes   = require('./routes/salonRoutes')
+const grupoRoutes   = require('./routes/grupoRoutes')
+const materiaRoutes = require('./routes/materiaRoutes')
+
+
 
 const app = express();
 
@@ -15,9 +20,12 @@ app.use(express.json());
 app.use('/api/auth',    authRoutes);
 app.use('/api/horario', horarioRoutes);
 app.use('/api/profesores', profesorRoutes)
+app.use('/api/salones',  salonRoutes)
+app.use('/api/grupos',   grupoRoutes)
+app.use('/api/materias', materiaRoutes)
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
 
