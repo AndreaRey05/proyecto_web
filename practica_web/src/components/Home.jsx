@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
 import API_URL from '../config'
 
+const DIAS_MAP = { 0:'domingo', 1:'lunes', 2:'martes', 3:'miercoles', 4:'jueves', 5:'viernes', 6:'sabado' }
 
-// Calendario pequeño
-function Calendario() {
+function Calendario({ onDiaClick, diaSeleccionado }) {
     const hoy = new Date()
     const [mes, setMes] = useState(hoy.getMonth())
     const [anio, setAnio] = useState(hoy.getFullYear())
@@ -27,6 +27,13 @@ function Calendario() {
     for (let i = 0; i < primerDia; i++) celdas.push(null)
     for (let i = 1; i <= diasEnMes; i++) celdas.push(i)
 
+    const handleClick = (dia) => {
+        if (!dia) return
+        const fecha = new Date(anio, mes, dia)
+        const nombreDia = DIAS_MAP[fecha.getDay()]
+        onDiaClick(nombreDia, dia, mes, anio)
+    }
+
     return (
         <div className="bg-white rounded-2xl shadow p-4 w-72">
             <p className="font-bold text-lg mb-2">{meses[mes]}, {anio}</p>
@@ -48,19 +55,41 @@ function Calendario() {
                 {['Su','Mo','Tu','We','Th','Fr','Sa'].map(d => <span key={d}>{d}</span>)}
             </div>
             <div className="grid grid-cols-7 text-center text-sm gap-y-1">
-                {celdas.map((dia, i) => (
-                    <span key={i} className={`py-1 rounded-full
-                        ${dia === hoy.getDate() && mes === hoy.getMonth() && anio === hoy.getFullYear()
-                            ? 'bg-[#5E0006] text-white font-bold' : 'text-gray-700'}`}>
-                        {dia || ''}
-                    </span>
-                ))}
+                {celdas.map((dia, i) => {
+                    const fecha = dia ? new Date(anio, mes, dia) : null
+                    const nombreDia = fecha ? DIAS_MAP[fecha.getDay()] : null
+                    const esHoy = dia === hoy.getDate() && mes === hoy.getMonth() && anio === hoy.getFullYear()
+                    const esSeleccionado = diaSeleccionado?.dia === dia &&
+                                          diaSeleccionado?.mes === mes &&
+                                          diaSeleccionado?.anio === anio
+                    const esFinde = nombreDia === 'sabado' || nombreDia === 'domingo'
+
+                    return (
+                        <span key={i}
+                            onClick={() => handleClick(dia)}
+                            className={`py-1 rounded-full transition
+                                ${!dia ? '' : esFinde ? 'text-gray-300' : 'cursor-pointer hover:bg-red-100'}
+                                ${esHoy ? 'bg-[#5E0006] text-white font-bold hover:bg-[#5E0006]' : ''}
+                                ${esSeleccionado && !esHoy ? 'bg-red-200 text-[#5E0006] font-bold' : ''}
+                                ${!esHoy && !esSeleccionado ? 'text-gray-700' : ''}
+                            `}>
+                            {dia || ''}
+                        </span>
+                    )
+                })}
             </div>
+            {diaSeleccionado && (
+                <button
+                    onClick={() => onDiaClick(null)}
+                    className="mt-2 text-xs text-gray-400 hover:text-[#5E0006] w-full text-center"
+                >
+                    Mostrar todos los días
+                </button>
+            )}
         </div>
     )
 }
 
-// Modal de detalle de salón
 function ModalSalon({ clase, onClose }) {
     if (!clase) return null
     return (
@@ -103,10 +132,11 @@ function ModalSalon({ clase, onClose }) {
 }
 
 function Home({ rol }) {
-    const [clases, setClases] = useState([])
-    const [busqueda, setBusqueda] = useState('')
+    const [clases, setClases]         = useState([])
+    const [busqueda, setBusqueda]     = useState('')
     const [seleccionado, setSeleccionado] = useState(null)
     const [modalClase, setModalClase] = useState(null)
+    const [diaSeleccionado, setDiaSeleccionado] = useState(null)
 
     useEffect(() => {
         const token = localStorage.getItem('token')
@@ -118,12 +148,27 @@ function Home({ rol }) {
         .catch(() => setClases([]))
     }, [])
 
-    // Agrupar por salón — mostrar si está ocupado ahora
     const ahora = new Date()
-    const diaActual = ['domingo','lunes','martes','miercoles','jueves','viernes','sabado'][ahora.getDay()]
+    const diaActual = DIAS_MAP[ahora.getDay()]
     const horaActual = ahora.toTimeString().slice(0, 5)
 
-    const salonesUnicos = [...new Map(clases.map(c => [c.salon, c])).values()]
+    const handleDiaClick = (nombreDia, dia, mes, anio) => {
+        if (!nombreDia) return setDiaSeleccionado(null)
+        setDiaSeleccionado({ nombreDia, dia, mes, anio })
+    }
+
+    // Filtra por búsqueda y día seleccionado
+    const clasesFiltradas = clases.filter(c => {
+        const matchBusqueda =
+            c.salon.toLowerCase().includes(busqueda.toLowerCase()) ||
+            c.profesor.toLowerCase().includes(busqueda.toLowerCase())
+        const matchDia = diaSeleccionado
+            ? c.dia === diaSeleccionado.nombreDia
+            : true
+        return matchBusqueda && matchDia
+    })
+
+    const salonesUnicos = [...new Map(clasesFiltradas.map(c => [c.salon, c])).values()]
 
     const estaOcupado = (salon) => {
         return clases.some(c =>
@@ -143,18 +188,13 @@ function Home({ rol }) {
         )
     }
 
-    const filtrados = salonesUnicos.filter(c =>
-        c.salon.toLowerCase().includes(busqueda.toLowerCase()) ||
-        c.profesor.toLowerCase().includes(busqueda.toLowerCase())
-    )
-
     return (
         <div className="flex gap-4 p-6 h-full">
 
             {/* Centro */}
             <div className="flex-1 flex flex-col gap-4">
 
-                {/* Barra de búsqueda */}
+                {/* Barra búsqueda */}
                 <div className="flex items-center bg-white rounded-full px-4 py-2 shadow gap-2">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#bdbdbd" strokeWidth="2">
                         <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
@@ -172,7 +212,9 @@ function Home({ rol }) {
                 <div className="bg-white rounded-2xl shadow p-6 text-center">
                     <h2 className="text-xl font-bold text-gray-700">Administración de Aulas</h2>
                     <p className="text-sm text-gray-400 mt-1">
-                        Consulta la disponibilidad de aulas y salones en tiempo real.
+                        {diaSeleccionado
+                            ? `Mostrando clases del ${diaSeleccionado.nombreDia}`
+                            : 'Consulta la disponibilidad de aulas y salones en tiempo real.'}
                     </p>
                 </div>
 
@@ -180,26 +222,26 @@ function Home({ rol }) {
                 <div className="bg-white rounded-2xl shadow p-4 flex-1 overflow-auto">
                     <p className="font-bold text-gray-600 mb-3">Profesor</p>
                     <div className="flex flex-col gap-2">
-                        {filtrados.length === 0 && (
+                        {salonesUnicos.length === 0 && (
                             <p className="text-gray-400 text-sm text-center py-8">
-                                No hay aulas registradas aún
+                                {diaSeleccionado
+                                    ? `No hay clases registradas para ${diaSeleccionado.nombreDia}`
+                                    : 'No hay aulas registradas aún'}
                             </p>
                         )}
-                        {filtrados.map((c, i) => {
+                        {salonesUnicos.map((c, i) => {
                             const ocupado = estaOcupado(c.salon)
                             const claseAhora = claseActual(c.salon)
                             return (
                                 <div key={i}
-                                    className="flex items-center justify-between bg-gray-50 rounded-xl px-4 py-3 hover:bg-gray-100 transition">
-                                    {/* Profesor */}
+                                    onClick={() => setSeleccionado(c)}
+                                    className="flex items-center justify-between bg-gray-50 rounded-xl px-4 py-3 hover:bg-gray-100 transition cursor-pointer">
                                     <div className="flex items-center gap-3 w-48">
                                         <div className="w-9 h-9 rounded-full bg-[#5E0006] flex items-center justify-center text-white text-sm font-bold">
                                             {c.profesor.charAt(0)}
                                         </div>
                                         <span className="text-sm font-medium truncate">{c.profesor}</span>
                                     </div>
-
-                                    {/* Salón */}
                                     <span className={`text-xs px-3 py-1 rounded-full font-medium
                                         ${i % 4 === 0 ? 'bg-pink-100 text-pink-700' :
                                           i % 4 === 1 ? 'bg-yellow-100 text-yellow-700' :
@@ -207,18 +249,14 @@ function Home({ rol }) {
                                                         'bg-blue-100 text-blue-700'}`}>
                                         {c.salon}
                                     </span>
-
-                                    {/* Disponibilidad */}
                                     <div className="flex items-center gap-1">
                                         <span className={`w-2 h-2 rounded-full ${ocupado ? 'bg-red-500' : 'bg-green-500'}`}></span>
                                         <span className={`text-xs font-medium ${ocupado ? 'text-red-500' : 'text-green-500'}`}>
                                             {ocupado ? 'Ocupado' : 'Disponible'}
                                         </span>
                                     </div>
-
-                                    {/* Botón detalle */}
                                     <button
-                                        onClick={() => setModalClase(claseAhora || c)}
+                                        onClick={e => { e.stopPropagation(); setModalClase(claseAhora || c) }}
                                         className="text-gray-400 hover:text-[#5E0006] text-lg">⋮</button>
                                 </div>
                             )
@@ -229,8 +267,6 @@ function Home({ rol }) {
 
             {/* Panel derecho */}
             <div className="flex flex-col gap-4 w-72">
-
-                {/* Header usuario */}
                 <div className="flex items-center justify-end gap-3">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="2">
                         <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
@@ -241,19 +277,15 @@ function Home({ rol }) {
                         <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
                     </svg>
                     <span className="text-sm font-bold text-gray-600">CECA</span>
-                    <div className="w-9 h-9 rounded-full bg-[#5E0006] flex items-center justify-center text-white text-sm font-bold">
-                        A
-                    </div>
+                    <div className="w-9 h-9 rounded-full bg-[#5E0006] flex items-center justify-center text-white text-sm font-bold">A</div>
                 </div>
 
-                <Calendario />
+                <Calendario onDiaClick={handleDiaClick} diaSeleccionado={diaSeleccionado} />
 
                 {/* Detalle profesor seleccionado */}
                 {seleccionado && (
                     <div className="bg-white rounded-2xl shadow p-4 flex flex-col items-center gap-2">
-                        <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center text-2xl text-gray-500">
-                            👤
-                        </div>
+                        <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center text-2xl">👤</div>
                         <p className="text-sm font-bold text-gray-700">{seleccionado.profesor}</p>
                         <div className="flex gap-3 text-gray-400">
                             <span className="cursor-pointer hover:text-[#5E0006]">📞</span>
@@ -267,16 +299,13 @@ function Home({ rol }) {
                             </div>
                             <div className="flex justify-between">
                                 <span className="text-gray-400">Turno</span>
-                                <span className="font-medium">
-                                    {seleccionado.hora_inicio} - {seleccionado.hora_fin}
-                                </span>
+                                <span className="font-medium">{seleccionado.hora_entrada} - {seleccionado.hora_salida}</span>
                             </div>
                         </div>
                     </div>
                 )}
             </div>
 
-            {/* Modal salón */}
             <ModalSalon clase={modalClase} onClose={() => setModalClase(null)} />
         </div>
     )

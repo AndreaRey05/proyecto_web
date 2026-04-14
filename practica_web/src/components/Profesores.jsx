@@ -11,9 +11,9 @@ function Profesores({ rol }) {
         fetch(`${API_URL}/api/profesores`, {
             headers: { Authorization: `Bearer ${token}` }
         })
-        .then(r => r.json())
-        .then(data => setProfesores(Array.isArray(data) ? data : []))
-        .catch(() => setProfesores([]))
+            .then(r => r.json())
+            .then(data => setProfesores(Array.isArray(data) ? data : []))
+            .catch(() => setProfesores([]))
     }, [])
 
     const colores = [
@@ -26,18 +26,62 @@ function Profesores({ rol }) {
         p.nombre.toLowerCase().includes(busqueda.toLowerCase())
     )
 
-    const handleEliminar = async (num_cuenta) => {
-        if (!confirm('¿Seguro que deseas eliminar este profesor?')) return
+    const [modalEliminar, setModalEliminar] = useState(null) // guarda el num_cuenta a eliminar
+    const [contrasena, setContrasena] = useState('')
+    const [errorContra, setErrorContra] = useState('')
+
+    const handleEliminar = (num_cuenta) => {
+        setModalEliminar(num_cuenta)
+        setContrasena('')
+        setErrorContra('')
+    }
+
+    const confirmarEliminar = async () => {
         const token = localStorage.getItem('token')
-        const res = await fetch(`${API_URL}/api/profesores/${num_cuenta}`, {
+        const res = await fetch(`${API_URL}/api/profesores/${modalEliminar}`, {
             method: 'DELETE',
-            headers: { Authorization: `Bearer ${token}` }
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ contrasena })
         })
-        if (res.ok) {
-            setProfesores(prev => prev.filter(p => p.num_cuenta !== num_cuenta))
-            if (seleccionado?.num_cuenta === num_cuenta) setSeleccionado(null)
-        } else {
-            alert('Error al eliminar profesor')
+        const data = await res.json()
+        if (!res.ok) {
+            setErrorContra(data.error)
+            return
+        }
+        setProfesores(prev => prev.filter(p => p.num_cuenta !== modalEliminar))
+        if (seleccionado?.num_cuenta === modalEliminar) setSeleccionado(null)
+        setModalEliminar(null)
+
+        {
+            modalEliminar && (
+                <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-2xl shadow-xl p-6 w-80 relative flex flex-col gap-4">
+                        <button onClick={() => setModalEliminar(null)}
+                            className="absolute top-3 right-4 text-gray-400 hover:text-gray-700 text-xl">✕</button>
+                        <h2 className="font-bold text-lg text-[#5E0006]">Confirmar eliminación</h2>
+                        <p className="text-sm text-gray-500">Ingresa tu contraseña para confirmar</p>
+                        <input
+                            type="password"
+                            placeholder="Contraseña"
+                            value={contrasena}
+                            onChange={e => { setContrasena(e.target.value); setErrorContra('') }}
+                            className="w-full border rounded-lg px-3 py-2 text-sm"
+                        />
+                        {errorContra && (
+                            <p className="text-red-500 text-xs">{errorContra}</p>
+                        )}
+                        <button
+                            onClick={confirmarEliminar}
+                            className="bg-red-500 text-white py-2 rounded-lg font-bold text-sm hover:bg-red-600 transition"
+                        >
+                            Eliminar
+                        </button>
+                    </div>
+                </div>
+            )
         }
     }
 
@@ -48,7 +92,7 @@ function Profesores({ rol }) {
                 {/* Barra búsqueda */}
                 <div className="flex items-center bg-white rounded-full px-4 py-2 shadow gap-2">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#bdbdbd" strokeWidth="2">
-                        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                        <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
                     </svg>
                     <input
                         type="text"
