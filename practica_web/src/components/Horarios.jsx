@@ -21,7 +21,7 @@ function ModalDetalle({ clase, onClose }) {
                     <div>
                         <p className="text-gray-400 text-xs">Horario</p>
                         <p className="font-semibold">
-                            {clase.startStr?.slice(11,16)} - {clase.endStr?.slice(11,16)}
+                            {clase.startStr?.slice(11, 16)} - {clase.endStr?.slice(11, 16)}
                         </p>
                     </div>
                     <div>
@@ -45,8 +45,8 @@ function ModalAnadir({ profesores, salones, grupos, materias, onGuardar, onClose
         hora_inicio: '', hora_fin: ''
     })
 
-    const DIAS = ['lunes','martes','miercoles','jueves','viernes']
-    const DIAS_LABEL = ['Lunes','Martes','Miércoles','Jueves','Viernes']
+    const DIAS = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes']
+    const DIAS_LABEL = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes']
 
     const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value })
 
@@ -141,16 +141,19 @@ function ModalAnadir({ profesores, salones, grupos, materias, onGuardar, onClose
 const diaANumero = { lunes: 1, martes: 2, miercoles: 3, jueves: 4, viernes: 5 }
 
 function Horarios({ rol }) {
-    const [clases, setClases]         = useState([])
+    const [clases, setClases] = useState([])
     const [profesores, setProfesores] = useState([])
-    const [salones, setSalones]       = useState([])
-    const [grupos, setGrupos]         = useState([])
-    const [materias, setMaterias]     = useState([])
+    const [salones, setSalones] = useState([])
+    const [grupos, setGrupos] = useState([])
+    const [materias, setMaterias] = useState([])
     const [modalDetalle, setModalDetalle] = useState(null)
-    const [modalAnadir, setModalAnadir]   = useState(false)
+    const [modalAnadir, setModalAnadir] = useState(false)
 
     const token = localStorage.getItem('token')
-    const headers = { Authorization: `Bearer ${token}` }
+    const headers = {
+        Authorization: `Bearer ${token}`,
+        'ngrok-skip-browser-warning': 'true'
+    }
 
     const cargarClases = () => {
         fetch(`${API_URL}/api/horario`, { headers })
@@ -174,7 +177,7 @@ function Horarios({ rol }) {
     }, [])
 
     // Convierte clases de BD a eventos de FullCalendar
-    const coloresEventos = ['#3b82f6','#8b5cf6','#10b981','#f59e0b','#ef4444','#ec4899']
+    const coloresEventos = ['#3b82f6', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444', '#ec4899']
 
     const eventos = clases.map((c, i) => {
         const diaN = diaANumero[c.dia]
@@ -184,13 +187,13 @@ function Horarios({ rol }) {
             id: c.id_clase,
             title: c.materia,
             start: `${fechaStr}T${c.hora_inicio}`,
-            end:   `${fechaStr}T${c.hora_fin}`,
+            end: `${fechaStr}T${c.hora_fin}`,
             backgroundColor: coloresEventos[i % coloresEventos.length],
             borderColor: 'transparent',
             extendedProps: {
                 profesor: c.profesor,
-                salon:    c.salon,
-                grupo:    c.grupo
+                salon: c.salon,
+                grupo: c.grupo
             }
         }
     })
@@ -207,7 +210,7 @@ function Horarios({ rol }) {
         cargarClases()
     }
 
-    
+
 
     return (
         <div className="flex flex-col gap-4 p-6 h-full">
@@ -246,7 +249,7 @@ function Horarios({ rol }) {
             </div>
 
             {modalDetalle && <ModalDetalle clase={modalDetalle} onClose={() => setModalDetalle(null)} />}
-            {modalAnadir  && (
+            {modalAnadir && (
                 <ModalAnadir
                     profesores={profesores}
                     salones={salones}

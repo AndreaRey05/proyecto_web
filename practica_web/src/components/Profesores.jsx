@@ -5,12 +5,18 @@ function Profesores({ rol }) {
     const [profesores, setProfesores] = useState([])
     const [busqueda, setBusqueda] = useState('')
     const [seleccionado, setSeleccionado] = useState(null)
+    const [modalEliminar, setModalEliminar] = useState(null)
+    const [contrasena, setContrasena] = useState('')
+    const [errorContra, setErrorContra] = useState('')
+
+    const token = localStorage.getItem('token')
+    const headers = {
+        Authorization: `Bearer ${token}`,
+        'ngrok-skip-browser-warning': 'true'
+    }
 
     useEffect(() => {
-        const token = localStorage.getItem('token')
-        fetch(`${API_URL}/api/profesores`, {
-            headers: { Authorization: `Bearer ${token}` }
-        })
+        fetch(`${API_URL}/api/profesores`, { headers })
             .then(r => r.json())
             .then(data => setProfesores(Array.isArray(data) ? data : []))
             .catch(() => setProfesores([]))
@@ -26,10 +32,6 @@ function Profesores({ rol }) {
         p.nombre.toLowerCase().includes(busqueda.toLowerCase())
     )
 
-    const [modalEliminar, setModalEliminar] = useState(null) // guarda el num_cuenta a eliminar
-    const [contrasena, setContrasena] = useState('')
-    const [errorContra, setErrorContra] = useState('')
-
     const handleEliminar = (num_cuenta) => {
         setModalEliminar(num_cuenta)
         setContrasena('')
@@ -37,11 +39,10 @@ function Profesores({ rol }) {
     }
 
     const confirmarEliminar = async () => {
-        const token = localStorage.getItem('token')
         const res = await fetch(`${API_URL}/api/profesores/${modalEliminar}`, {
             method: 'DELETE',
             headers: {
-                Authorization: `Bearer ${token}`,
+                ...headers,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ contrasena })
@@ -54,35 +55,6 @@ function Profesores({ rol }) {
         setProfesores(prev => prev.filter(p => p.num_cuenta !== modalEliminar))
         if (seleccionado?.num_cuenta === modalEliminar) setSeleccionado(null)
         setModalEliminar(null)
-
-        {
-            modalEliminar && (
-                <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-2xl shadow-xl p-6 w-80 relative flex flex-col gap-4">
-                        <button onClick={() => setModalEliminar(null)}
-                            className="absolute top-3 right-4 text-gray-400 hover:text-gray-700 text-xl">✕</button>
-                        <h2 className="font-bold text-lg text-[#5E0006]">Confirmar eliminación</h2>
-                        <p className="text-sm text-gray-500">Ingresa tu contraseña para confirmar</p>
-                        <input
-                            type="password"
-                            placeholder="Contraseña"
-                            value={contrasena}
-                            onChange={e => { setContrasena(e.target.value); setErrorContra('') }}
-                            className="w-full border rounded-lg px-3 py-2 text-sm"
-                        />
-                        {errorContra && (
-                            <p className="text-red-500 text-xs">{errorContra}</p>
-                        )}
-                        <button
-                            onClick={confirmarEliminar}
-                            className="bg-red-500 text-white py-2 rounded-lg font-bold text-sm hover:bg-red-600 transition"
-                        >
-                            Eliminar
-                        </button>
-                    </div>
-                </div>
-            )
-        }
     }
 
     return (
@@ -116,7 +88,6 @@ function Profesores({ rol }) {
                             onClick={() => setSeleccionado(p)}
                             className={`${colores[i % colores.length]} rounded-2xl p-4 flex flex-col items-center gap-2 cursor-pointer hover:shadow-md transition relative`}
                         >
-                            {/* Botón eliminar — solo admin */}
                             {rol === 'administrador' && (
                                 <button
                                     onClick={e => { e.stopPropagation(); handleEliminar(p.num_cuenta) }}
@@ -125,8 +96,6 @@ function Profesores({ rol }) {
                                     ✕
                                 </button>
                             )}
-
-                            {/* Avatar */}
                             <div className="w-16 h-16 rounded-full bg-white/60 flex items-center justify-center text-3xl">
                                 👤
                             </div>
@@ -146,14 +115,11 @@ function Profesores({ rol }) {
                             onClick={() => setSeleccionado(null)}
                             className="absolute top-3 right-4 text-gray-400 hover:text-gray-700 text-xl"
                         >✕</button>
-
                         <div className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center text-4xl">
                             👤
                         </div>
-
                         <p className="font-bold text-gray-800 text-lg">{seleccionado.nombre}</p>
                         <p className="text-xs text-gray-400">Núm. cuenta: {seleccionado.num_cuenta}</p>
-
                         <div className="w-full text-sm flex flex-col gap-2 mt-2">
                             <div className="flex justify-between border-b pb-2">
                                 <span className="text-gray-400">Turno</span>
@@ -162,7 +128,6 @@ function Profesores({ rol }) {
                                 </span>
                             </div>
                         </div>
-
                         {rol === 'administrador' && (
                             <button
                                 onClick={() => handleEliminar(seleccionado.num_cuenta)}
@@ -171,6 +136,34 @@ function Profesores({ rol }) {
                                 Eliminar Profesor
                             </button>
                         )}
+                    </div>
+                </div>
+            )}
+
+            {/* Modal confirmar eliminar */}
+            {modalEliminar && (
+                <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-2xl shadow-xl p-6 w-80 relative flex flex-col gap-4">
+                        <button onClick={() => setModalEliminar(null)}
+                            className="absolute top-3 right-4 text-gray-400 hover:text-gray-700 text-xl">✕</button>
+                        <h2 className="font-bold text-lg text-[#5E0006]">Confirmar eliminación</h2>
+                        <p className="text-sm text-gray-500">Ingresa tu contraseña para confirmar</p>
+                        <input
+                            type="password"
+                            placeholder="Contraseña"
+                            value={contrasena}
+                            onChange={e => { setContrasena(e.target.value); setErrorContra('') }}
+                            className="w-full border rounded-lg px-3 py-2 text-sm"
+                        />
+                        {errorContra && (
+                            <p className="text-red-500 text-xs">{errorContra}</p>
+                        )}
+                        <button
+                            onClick={confirmarEliminar}
+                            className="bg-red-500 text-white py-2 rounded-lg font-bold text-sm hover:bg-red-600 transition"
+                        >
+                            Eliminar
+                        </button>
                     </div>
                 </div>
             )}
