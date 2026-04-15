@@ -8,6 +8,7 @@ function Profesores({ rol }) {
     const [modalEliminar, setModalEliminar] = useState(null)
     const [contrasena, setContrasena] = useState('')
     const [errorContra, setErrorContra] = useState('')
+    const [materiasProfesor, setMateriasProfesor] = useState([])
 
     const token = localStorage.getItem('token')
     const headers = {
@@ -22,6 +23,17 @@ function Profesores({ rol }) {
             .then(data => setProfesores(Array.isArray(data) ? data : []))
             .catch(() => setProfesores([]))
     }, [])
+
+    useEffect(() => {
+        if (seleccionado) {
+            fetch(`${API_URL}/api/profesores/${seleccionado.num_cuenta}/materias`, {
+                headers: getHeaders(token)
+            })
+                .then(r => r.json())
+                .then(data => setMateriasProfesor(Array.isArray(data) ? data : []))
+                .catch(() => setMateriasProfesor([]))
+        }
+    }, [seleccionado])
 
     const colores = [
         'bg-yellow-100', 'bg-blue-100', 'bg-purple-100',
@@ -108,40 +120,65 @@ function Profesores({ rol }) {
             {/* Modal detalle profesor */}
             {seleccionado && (
                 <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-2xl shadow-xl p-6 w-80 relative flex flex-col items-center gap-3">
+                    <div className="bg-white rounded-2xl shadow-xl p-6 w-96 relative flex flex-col">
                         <button
                             onClick={() => setSeleccionado(null)}
                             className="absolute top-3 right-4 text-gray-400 hover:text-gray-700 text-xl"
                         >✕</button>
-                        <div className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center text-4xl">
-                            👤
-                        </div>
-                        <p className="font-bold text-gray-800 text-lg">{seleccionado.nombre}</p>
-                        <p className="text-xs text-gray-400">Email: {seleccionado.email}</p>
-                        <div className="w-full text-sm flex flex-col gap-2 mt-2">
-                            <div className="flex justify-between border-b pb-2">
-                                <span className="text-gray-400">Turno</span>
-                                <span className="font-medium">
-                                    {seleccionado.hora_entrada} - {seleccionado.hora_salida}
-                                </span>
-                                <span className="text-gray-400">Horas libres</span>
-                                <span className="font-medium">
-                                    {/* Aquí podrías mostrar las horas libres obtenidas del backend */}
-                                </span>
-                                <span className="text-gray-400">Materias</span>
-                                <span className="font-medium">
-                                    {[...new Set(profesores
-                                        .filter(p => p.num_cuenta === seleccionado.num_cuenta)
-                                        .map(p => p.materia)
-                                    )].join(', ') || 'Sin materias'}
-                                </span>
 
+                        {/* Cabecera con avatar */}
+                        <div className="flex flex-col items-center gap-2 mb-4">
+                            <div className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center text-4xl">
+                                👤
+                            </div>
+                            <p className="font-bold text-gray-800 text-lg">{seleccionado.nombre}</p>
+                        </div>
+
+                        {/* Información detallada */}
+                        <div className="w-full text-sm flex flex-col gap-3">
+                            {/* Email */}
+                            <div className="flex justify-between items-center border-b pb-2">
+                                <span className="text-gray-400">Email</span>
+                                <span className="font-medium text-gray-700">{seleccionado.email || 'No registrado'}</span>
+                            </div>
+
+                            {/* Turno */}
+                            <div className="flex justify-between items-center border-b pb-2">
+                                <span className="text-gray-400">Turno</span>
+                                <span className="font-medium text-gray-700">
+                                    {seleccionado.hora_entrada && seleccionado.hora_salida
+                                        ? `${seleccionado.hora_entrada} - ${seleccionado.hora_salida}`
+                                        : 'No asignado'}
+                                </span>
+                            </div>
+
+                            {/* Número de cuenta */}
+                            <div className="flex justify-between items-center border-b pb-2">
+                                <span className="text-gray-400">Núm. Cuenta</span>
+                                <span className="font-medium text-gray-700">{seleccionado.num_cuenta}</span>
+                            </div>
+
+                            {/* Materias que imparte */}
+                            <div className="flex flex-col gap-1 border-b pb-2">
+                                <span className="text-gray-400 mb-1">Materias que imparte</span>
+                                <div className="flex flex-wrap gap-1">
+                                    {materiasProfesor.map((m, idx) => (
+                                        <span key={idx} className="bg-gray-100 text-gray-700 px-2 py-1 rounded-md text-xs">
+                                            {m.nombre || m.materia}
+                                        </span>
+                                    ))}
+                                    {materiasProfesor.length === 0 && (
+                                        <span className="text-gray-400 text-xs">Sin materias asignadas</span>
+                                    )}
+                                </div>
                             </div>
                         </div>
+
+                        {/* Botón eliminar para admin */}
                         {rol === 'administrador' && (
                             <button
                                 onClick={() => handleEliminar(seleccionado.num_cuenta)}
-                                className="mt-2 bg-red-500 text-white px-6 py-2 rounded-lg text-sm font-bold hover:bg-red-600 transition w-full"
+                                className="mt-4 bg-red-500 text-white px-6 py-2 rounded-lg text-sm font-bold hover:bg-red-600 transition w-full"
                             >
                                 Eliminar Profesor
                             </button>
