@@ -372,39 +372,38 @@ function Horarios({ rol }) {
                             const confirmar = window.confirm(`¿Eliminar la clase "${info.event.title}"?`);
                             if (confirmar) {
                                 const idClase = info.event.id;
+                                // Dentro del eventClick, donde está el fetch para eliminar
                                 fetch(`${API_URL}/api/horario/${info.event.id}`, {
-                                    method: 'POST',
-                                    headers: getHeaders(token, true),
-                                    body: JSON.stringify({ _method: 'DELETE' })
-                                
-                            })
+                                    method: 'DELETE',                     // ← método HTTP correcto
+                                    headers: getHeaders(token)            // sin body, no necesita Content-Type
+                                })
                                     .then(res => {
                                         if (res.ok) {
-                    cargarClases(); // recargar horarios
-                setModoEliminar(false); // salir del modo eliminar
+                                            cargarClases();                   // recargar la lista
+                                            setModoEliminar(false);
                                         } else {
-                    alert('Error al eliminar la clase');
+                                            alert('Error al eliminar la clase');
                                         }
                                     })
                                     .catch(() => alert('Error de conexión'));
                             }
                         } else {
-                    setModalDetalle(info.event);
+                            setModalDetalle(info.event);
                         }
                     }}
-                height="600px"
-                locale="es"
-                eventDidMount={(info) => {
-                    const bgColor = info.event.backgroundColor;
-                    info.el.style.setProperty('background-color', bgColor, 'important');
-                    info.el.style.setProperty('border-color', bgColor, 'important');
-                    info.el.style.setProperty('color', '#fff', 'important');
-                    const mainEl = info.el.querySelector('.fc-event-main');
-                    if (mainEl) {
-                        mainEl.style.setProperty('background-color', bgColor, 'important');
-                        mainEl.style.setProperty('color', '#fff', 'important');
-                    }
-                }}
+                    height="600px"
+                    locale="es"
+                    eventDidMount={(info) => {
+                        const bgColor = info.event.backgroundColor;
+                        info.el.style.setProperty('background-color', bgColor, 'important');
+                        info.el.style.setProperty('border-color', bgColor, 'important');
+                        info.el.style.setProperty('color', '#fff', 'important');
+                        const mainEl = info.el.querySelector('.fc-event-main');
+                        if (mainEl) {
+                            mainEl.style.setProperty('background-color', bgColor, 'important');
+                            mainEl.style.setProperty('color', '#fff', 'important');
+                        }
+                    }}
                 />
 
             </div>
