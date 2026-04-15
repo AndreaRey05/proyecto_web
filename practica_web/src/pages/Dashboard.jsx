@@ -4,6 +4,7 @@ import uaeh from '../assets/uaeh.png'
 import Home from '../components/Home'
 import Profesores from '../components/Profesores'
 import Horarios from '../components/Horarios'
+import R from '../assets/R.png'
 
 function Dashboard() {
     const [seccion, setSeccion] = useState('home')
