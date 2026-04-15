@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import API_URL from '../config'
+import API_URL, { getHeaders } from '../config'
 
 function Profesores({ rol }) {
     const [profesores, setProfesores] = useState([])
@@ -16,7 +16,8 @@ function Profesores({ rol }) {
     }
 
     useEffect(() => {
-        fetch(`${API_URL}/api/profesores`, { headers })
+        const token = localStorage.getItem('token')
+        fetch(`${API_URL}/api/profesores`, { headers: getHeaders(token) })
             .then(r => r.json())
             .then(data => setProfesores(Array.isArray(data) ? data : []))
             .catch(() => setProfesores([]))
@@ -41,10 +42,7 @@ function Profesores({ rol }) {
     const confirmarEliminar = async () => {
         const res = await fetch(`${API_URL}/api/profesores/${modalEliminar}`, {
             method: 'DELETE',
-            headers: {
-                ...headers,
-                'Content-Type': 'application/json'
-            },
+            headers: getHeaders(token, true),
             body: JSON.stringify({ contrasena })
         })
         const data = await res.json()

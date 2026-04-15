@@ -140,9 +140,7 @@ function Home({ rol }) {
 
     useEffect(() => {
         const token = localStorage.getItem('token')
-        fetch(`${API_URL}/api/horario`, {
-            headers: { Authorization: `Bearer ${token}` }
-        })
+            fetch(`${API_URL}/api/horario`, { headers: getHeaders(token) })
         .then(r => r.json())
         .then(data => setClases(Array.isArray(data) ? data : []))
         .catch(() => setClases([]))

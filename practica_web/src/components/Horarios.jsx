@@ -3,7 +3,7 @@ import FullCalendar from '@fullcalendar/react'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
-import API_URL from '../config'
+import API_URL, { getHeaders } from '../config'
 
 function ModalDetalle({ clase, onClose }) {
     if (!clase) return null
@@ -150,10 +150,7 @@ function Horarios({ rol }) {
     const [modalAnadir, setModalAnadir] = useState(false)
 
     const token = localStorage.getItem('token')
-    const headers = {
-        Authorization: `Bearer ${token}`,
-        'ngrok-skip-browser-warning': 'true'
-    }
+    const headers = getHeaders(token)
 
     const cargarClases = () => {
         fetch(`${API_URL}/api/horario`, { headers })
@@ -165,14 +162,10 @@ function Horarios({ rol }) {
     useEffect(() => {
         cargarClases()
         if (rol === 'administrador') {
-            fetch(`${API_URL}/api/profesores`, { headers })
-                .then(r => r.json()).then(d => setProfesores(Array.isArray(d) ? d : []))
-            fetch(`${API_URL}/api/salones`, { headers })
-                .then(r => r.json()).then(d => setSalones(Array.isArray(d) ? d : []))
-            fetch(`${API_URL}/api/grupos`, { headers })
-                .then(r => r.json()).then(d => setGrupos(Array.isArray(d) ? d : []))
-            fetch(`${API_URL}/api/materias`, { headers })
-                .then(r => r.json()).then(d => setMaterias(Array.isArray(d) ? d : []))
+            fetch(`${API_URL}/api/profesores`, { headers: getHeaders(token) })
+            fetch(`${API_URL}/api/salones`, { headers: getHeaders(token) })
+            fetch(`${API_URL}/api/grupos`, { headers: getHeaders(token) })
+            fetch(`${API_URL}/api/materias`, { headers: getHeaders(token) })
         }
     }, [])
 
@@ -201,7 +194,7 @@ function Horarios({ rol }) {
     const handleGuardar = async (form) => {
         const res = await fetch(`${API_URL}/api/horario`, {
             method: 'POST',
-            headers: { ...headers, 'Content-Type': 'application/json' },
+            headers: getHeaders(token, true),
             body: JSON.stringify(form)
         })
         const data = await res.json()
