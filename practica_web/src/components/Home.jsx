@@ -169,7 +169,7 @@ function Home({ rol }) {
     const salonesUnicos = diaSeleccionado
         ? clases.filter(c => c.dia === diaSeleccionado.nombreDia)
         : clases.filter(c => c.dia === diaActual)
-        
+
     const estaOcupado = (salon) => {
         return clases.some(c =>
             c.salon === salon &&
@@ -212,9 +212,7 @@ function Home({ rol }) {
                 <div className="bg-white rounded-2xl shadow p-6 text-center">
                     <h2 className="text-xl font-bold text-gray-700">Administración de Aulas</h2>
                     <p className="text-sm text-gray-400 mt-1">
-                        {diaSeleccionado
-                            ? `Mostrando clases del ${diaSeleccionado.nombreDia}`
-                            : 'Consulta la disponibilidad de aulas y salones en tiempo real.'}
+                            En CECA  somos responsables de administrar cada una de las aulas. Buscamos la cercanía entre los espacios educativos y nuestra comunidad garza.
                     </p>
                 </div>
 

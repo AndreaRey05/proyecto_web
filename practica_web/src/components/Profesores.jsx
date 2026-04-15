@@ -117,13 +117,25 @@ function Profesores({ rol }) {
                             👤
                         </div>
                         <p className="font-bold text-gray-800 text-lg">{seleccionado.nombre}</p>
-                        <p className="text-xs text-gray-400">Núm. cuenta: {seleccionado.num_cuenta}</p>
+                        <p className="text-xs text-gray-400">Email: {seleccionado.email}</p>
                         <div className="w-full text-sm flex flex-col gap-2 mt-2">
                             <div className="flex justify-between border-b pb-2">
                                 <span className="text-gray-400">Turno</span>
                                 <span className="font-medium">
                                     {seleccionado.hora_entrada} - {seleccionado.hora_salida}
                                 </span>
+                                <span className="text-gray-400">Horas libres</span>
+                                <span className="font-medium">
+                                    {/* Aquí podrías mostrar las horas libres obtenidas del backend */}
+                                </span>
+                                <span className="text-gray-400">Materias</span>
+                                <span className="font-medium">
+                                    {[...new Set(profesores
+                                        .filter(p => p.num_cuenta === seleccionado.num_cuenta)
+                                        .map(p => p.materia)
+                                    )].join(', ') || 'Sin materias'}
+                                </span>
+
                             </div>
                         </div>
                         {rol === 'administrador' && (
