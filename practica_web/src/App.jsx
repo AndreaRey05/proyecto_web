@@ -5,6 +5,7 @@ import LoginAlumno from './pages/LoginAlumno'
 import LoginAdmin from './pages/LoginAdmin'
 import Dashboard from './pages/Dashboard'
 
+
 function App() {
   return (
     <Routes>
@@ -13,7 +14,10 @@ function App() {
       <Route path="/login-alumno"    element={<LoginAlumno />} />
       <Route path="/login-admin"     element={<LoginAdmin />} />
       <Route path="/dashboard"       element={<Dashboard />} />
+
+    
     </Routes>
+      
   )
 }
 
