@@ -4,6 +4,7 @@ import uaeh from '../assets/uaeh.png'
 import Home from '../components/Home'
 import Profesores from '../components/Profesores'
 import Horarios from '../components/Horarios'
+import Materias from '../components/Materias'
 import R from '../assets/R.png'
 
 function Dashboard() {
@@ -79,6 +80,19 @@ function Dashboard() {
                         <line x1="3" y1="10" x2="21" y2="10" />
                     </svg>
                     Horarios
+                </button>
+                 <button
+                    onClick={() => setSeccion('Materias')}
+                    className={`w-full flex items-center gap-3 px-6 py-3 text-white font-bold text-sm tracking-wide transition
+                        ${seccion === 'Materias' ? 'bg-white/20 border-l-4 border-white' : 'hover:bg-white/10'}`}
+                >
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                    </svg>
+                    Materias
                 </button>
 
                 {/* Cerrar sesión al fondo */}

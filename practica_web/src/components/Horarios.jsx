@@ -372,7 +372,7 @@ function Horarios({ rol }) {
                             const confirmar = window.confirm(`¿Eliminar la clase "${info.event.title}"?`);
                             if (confirmar) {
                                 const idClase = info.event.id;
-                                // Dentro del eventClick, donde está el fetch para eliminar
+                                
                                 fetch(`${API_URL}/api/horario/${info.event.id}`, {
                                     method: 'DELETE',                     // ← método HTTP correcto
                                     headers: getHeaders(token)            // sin body, no necesita Content-Type
