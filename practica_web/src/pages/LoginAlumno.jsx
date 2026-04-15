@@ -17,7 +17,10 @@ function LoginAlumno() {
             try {
                 const res = await fetch(`${API_URL}/api/auth/login`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'ngrok-skip-browser-warning': 'true'
+                    },
                     body: JSON.stringify({
                         num_cuenta: parseInt(ncuenta),
                         contra: nip,
@@ -37,9 +40,14 @@ function LoginAlumno() {
             try {
                 const res = await fetch(`${API_URL}/api/auth/registro-alumno`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'ngrok-skip-browser-warning': 'true'
+                    },
                     body: JSON.stringify({
                         num_cuenta: parseInt(ncuenta),
+                        nombre,
+                        email,
                         contra: nip
                     })
                 })
