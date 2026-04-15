@@ -7,6 +7,7 @@ const { getHorario, addClase } = require('../controllers/horarioController');
 router.get('/',  verifyToken, getHorario);
 router.post('/', verifyToken, addClase);
 
+
 router.delete('/:id', verifyToken, async (req, res) => {
     const { id } = req.params
     
@@ -23,5 +24,6 @@ router.delete('/:id', verifyToken, async (req, res) => {
         res.status(500).json({ error: 'Error al eliminar la clase' })
     }
 });
+
 
 module.exports = router;
