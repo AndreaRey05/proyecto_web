@@ -142,6 +142,7 @@ const diaANumero = { lunes: 1, martes: 2, miercoles: 3, jueves: 4, viernes: 5 }
 
 function Horarios({ rol }) {
     const [clases, setClases] = useState([])
+    const [modoEliminar, setModoEliminar] = useState(false);
     const [profesores, setProfesores] = useState([])
     const [salones, setSalones] = useState([])
     const [grupos, setGrupos] = useState([])
@@ -271,6 +272,15 @@ function Horarios({ rol }) {
                     >
                         Añadir clase +
                     </button>
+                    <button
+                        onClick={() => setModoEliminar(!modoEliminar)}
+                        className={`px-4 py-2 rounded-lg text-sm font-bold transition ${modoEliminar
+                            ? 'bg-red-700 text-white'
+                            : 'bg-red-500 text-white hover:bg-red-600'
+                            }`}
+                    >
+                        {modoEliminar ? 'Modo eliminar activado' : 'Eliminar clase'}
+                    </button>
                 </div>
             )}
 
@@ -355,20 +365,46 @@ function Horarios({ rol }) {
                     allDaySlot={false}
                     expandRows={true}
                     events={eventos}
-                    eventClick={(info) => setModalDetalle(info.event)}
-                    height="600px"
-                    locale="es"
-                    eventDidMount={(info) => {
-                        const bgColor = info.event.backgroundColor;
-                        info.el.style.setProperty('background-color', bgColor, 'important');
-                        info.el.style.setProperty('border-color', bgColor, 'important');
-                        info.el.style.setProperty('color', '#fff', 'important');
-                        const mainEl = info.el.querySelector('.fc-event-main');
-                        if (mainEl) {
-                            mainEl.style.setProperty('background-color', bgColor, 'important');
-                            mainEl.style.setProperty('color', '#fff', 'important');
+                    eventClick={(info) => {
+                        console.log('Evento clickeado:', info.event);
+                        console.log('ID del evento:', info.event.id);
+                        if (modoEliminar) {
+                            const confirmar = window.confirm(`¿Eliminar la clase "${info.event.title}"?`);
+                            if (confirmar) {
+                                const idClase = info.event.id;
+                                fetch(`${API_URL}/api/horario/${info.event.id}`, {
+                                    method: 'POST',
+                                    headers: getHeaders(token, true),
+                                    body: JSON.stringify({ _method: 'DELETE' })
+                                
+                            })
+                                    .then(res => {
+                                        if (res.ok) {
+                    cargarClases(); // recargar horarios
+                setModoEliminar(false); // salir del modo eliminar
+                                        } else {
+                    alert('Error al eliminar la clase');
+                                        }
+                                    })
+                                    .catch(() => alert('Error de conexión'));
+                            }
+                        } else {
+                    setModalDetalle(info.event);
                         }
                     }}
+                height="600px"
+                locale="es"
+                eventDidMount={(info) => {
+                    const bgColor = info.event.backgroundColor;
+                    info.el.style.setProperty('background-color', bgColor, 'important');
+                    info.el.style.setProperty('border-color', bgColor, 'important');
+                    info.el.style.setProperty('color', '#fff', 'important');
+                    const mainEl = info.el.querySelector('.fc-event-main');
+                    if (mainEl) {
+                        mainEl.style.setProperty('background-color', bgColor, 'important');
+                        mainEl.style.setProperty('color', '#fff', 'important');
+                    }
+                }}
                 />
 
             </div>
