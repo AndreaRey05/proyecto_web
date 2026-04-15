@@ -188,7 +188,38 @@ function Horarios({ rol }) {
             hash = str.charCodeAt(i) + ((hash << 5) - hash);
         }
         const hue = Math.abs(hash % 360);
-        return `hsl(${hue}, 90%, 45%)`;
+        // Convertir HSL a HEX (saturación 90%, luminosidad 45%)
+        const saturation = 90;
+        const lightness = 45;
+        const hslToHex = (h, s, l) => {
+            h /= 360;
+            s /= 100;
+            l /= 100;
+            let r, g, b;
+            if (s === 0) {
+                r = g = b = l;
+            } else {
+                const hue2rgb = (p, q, t) => {
+                    if (t < 0) t += 1;
+                    if (t > 1) t -= 1;
+                    if (t < 1 / 6) return p + (q - p) * 6 * t;
+                    if (t < 1 / 2) return q;
+                    if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+                    return p;
+                };
+                const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                const p = 2 * l - q;
+                r = hue2rgb(p, q, h + 1 / 3);
+                g = hue2rgb(p, q, h);
+                b = hue2rgb(p, q, h - 1 / 3);
+            }
+            const toHex = x => {
+                const hex = Math.round(x * 255).toString(16);
+                return hex.length === 1 ? '0' + hex : hex;
+            };
+            return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+        };
+        return hslToHex(hue, saturation, lightness);
     }
     // Convierte clases de BD a eventos de FullCalendar
 
@@ -202,8 +233,8 @@ function Horarios({ rol }) {
             title: c.materia,
             start: `${fechaStr}T${c.hora_inicio}`,
             end: `${fechaStr}T${c.hora_fin}`,
-            backgroundColor: color,   // ✅ Usa la variable
-            borderColor: color,       // ✅ Usa la variable
+            backgroundColor: color,   // <-- clave para eventDidMount
+            borderColor: color,
             textColor: '#ffffff',
             extendedProps: {
                 profesor: c.profesor,
@@ -228,6 +259,7 @@ function Horarios({ rol }) {
 
 
     return (
+
         <div className="flex flex-col gap-4 p-6 h-full">
 
             {/* Botón añadir — solo admin */}
@@ -326,7 +358,19 @@ function Horarios({ rol }) {
                     eventClick={(info) => setModalDetalle(info.event)}
                     height="600px"
                     locale="es"
+                    eventDidMount={(info) => {
+                        const bgColor = info.event.backgroundColor;
+                        info.el.style.setProperty('background-color', bgColor, 'important');
+                        info.el.style.setProperty('border-color', bgColor, 'important');
+                        info.el.style.setProperty('color', '#fff', 'important');
+                        const mainEl = info.el.querySelector('.fc-event-main');
+                        if (mainEl) {
+                            mainEl.style.setProperty('background-color', bgColor, 'important');
+                            mainEl.style.setProperty('color', '#fff', 'important');
+                        }
+                    }}
                 />
+
             </div>
 
             {modalDetalle && <ModalDetalle clase={modalDetalle} onClose={() => setModalDetalle(null)} />}
