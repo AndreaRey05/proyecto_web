@@ -11,59 +11,61 @@ function Login() {
     const [salida, setSalida] = useState('');
     const [nombre, setNombre] = useState('');
     const navigate = useNavigate();
+    const [email, setEmail] = useState('');
 
     const handleSubmit = async (e) => {
-    e.preventDefault()
+        e.preventDefault()
 
-    if (modo === 'login') {
-        try {
-            const res = await fetch(`${API_URL}/api/auth/login`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    num_cuenta: parseInt(ncuenta),
-                    contra: nip,
-                    rol: 'profesor'
+        if (modo === 'login') {
+            try {
+                const res = await fetch(`${API_URL}/api/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        num_cuenta: parseInt(ncuenta),
+                        contra: nip,
+                        rol: 'profesor'
+                    })
                 })
-            })
 
-            const data = await res.json()
-            if (!res.ok) return alert(data.error)
+                const data = await res.json()
+                if (!res.ok) return alert(data.error)
 
-            localStorage.setItem('token', data.token)
-            localStorage.setItem('rol', data.rol)
-            navigate('/dashboard')
+                localStorage.setItem('token', data.token)
+                localStorage.setItem('rol', data.rol)
+                navigate('/dashboard')
 
-        } catch (error) {
-            alert('Error al conectar con el servidor')
-        }
+            } catch (error) {
+                alert('Error al conectar con el servidor')
+            }
 
-    } else {
-        // SIGN IN — registro de profesor
-        try {
-            const res = await fetch(`${API_URL}/api/auth/registro`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    num_cuenta: parseInt(ncuenta),
-                    nombre,
-                    contra: nip,
-                    hora_entrada: entrada,
-                    hora_salida: salida
+        } else {
+            // SIGN IN — registro de profesor
+            try {
+                const res = await fetch(`${API_URL}/api/auth/registro`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        num_cuenta: parseInt(ncuenta),
+                        nombre,
+                        email,
+                        contra: nip,
+                        hora_entrada: entrada,
+                        hora_salida: salida
+                    })
                 })
-            })
 
-            const data = await res.json()
-            if (!res.ok) return alert(data.error)
+                const data = await res.json()
+                if (!res.ok) return alert(data.error)
 
-            alert('Registro exitoso, ahora puedes iniciar sesión')
-            setModo('login')
+                alert('Registro exitoso, ahora puedes iniciar sesión')
+                setModo('login')
 
-        } catch (error) {
-            alert('Error al conectar con el servidor')
+            } catch (error) {
+                alert('Error al conectar con el servidor')
+            }
         }
-    }
-};
+    };
 
     return (
         <div className="min-h-screen bg-[#FFFFFF] flex items-center justify-center">
@@ -78,8 +80,8 @@ function Login() {
                     <button
                         onClick={() => setModo('login')}
                         className={`relative z-10 rounded-xl px-4 py-2 text-sm font-bold tracking-widest transition ${modo === 'login'
-                                ? 'bg-white text-[#5E0006]'
-                                : 'bg-transparent text-white hover:underline'
+                            ? 'bg-white text-[#5E0006]'
+                            : 'bg-transparent text-white hover:underline'
                             }`}
                     >
                         LOGIN
@@ -89,8 +91,8 @@ function Login() {
                     <button
                         onClick={() => setModo('signin')}
                         className={`relative z-10 text-xs font-medium tracking-widest transition ${modo === 'signin'
-                                ? 'bg-white text-[#5E0006] rounded-xl px-4 py-2'
-                                : 'text-white hover:underline'
+                            ? 'bg-white text-[#5E0006] rounded-xl px-4 py-2'
+                            : 'text-white hover:underline'
                             }`}
                     >
                         SIGN IN
@@ -142,11 +144,11 @@ function Login() {
                     {/* Hora de entrada y salida — solo en SIGN IN */}
                     {modo === 'signin' && (
                         <>
-                          <div className="w-full border-b border-gray-300 flex items-center gap-2 pb-1">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#bdbdbd" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                            <circle cx="12" cy="7" r="4" />
-                        </svg>
+                            <div className="w-full border-b border-gray-300 flex items-center gap-2 pb-1">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#bdbdbd" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                    <circle cx="12" cy="7" r="4" />
+                                </svg>
                                 <input
                                     type="text"
                                     placeholder="Nombre"
@@ -155,6 +157,20 @@ function Login() {
                                     className="flex-1 outline-none text-sm bg-transparent"
                                 />
                             </div>
+                            <div className="w-full border-b border-gray-300 flex items-center gap-2 pb-1">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#bdbdbd" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                                    <polyline points="22,6 12,13 2,6" />
+                                </svg>
+                                <input
+                                    type="email"
+                                    placeholder="Email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    className="flex-1 outline-none text-sm bg-transparent"
+                                />
+                            </div>
+
                             <div className="w-full border-b border-gray-300 flex items-center gap-2 pb-1">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#bdbdbd" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                                     <circle cx="12" cy="12" r="10" />

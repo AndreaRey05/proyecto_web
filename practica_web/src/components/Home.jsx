@@ -1,15 +1,15 @@
 import { useState, useEffect } from 'react'
 import API_URL, { getHeaders } from '../config'
 
-const DIAS_MAP = { 0:'domingo', 1:'lunes', 2:'martes', 3:'miercoles', 4:'jueves', 5:'viernes', 6:'sabado' }
+const DIAS_MAP = { 0: 'domingo', 1: 'lunes', 2: 'martes', 3: 'miercoles', 4: 'jueves', 5: 'viernes', 6: 'sabado' }
 
 function Calendario({ onDiaClick, diaSeleccionado }) {
     const hoy = new Date()
     const [mes, setMes] = useState(hoy.getMonth())
     const [anio, setAnio] = useState(hoy.getFullYear())
 
-    const meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
-                   'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre']
+    const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+        'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
 
     const primerDia = new Date(anio, mes, 1).getDay()
     const diasEnMes = new Date(anio, mes + 1, 0).getDate()
@@ -46,13 +46,13 @@ function Calendario({ onDiaClick, diaSeleccionado }) {
                     </select>
                     <select value={anio} onChange={e => setAnio(parseInt(e.target.value))}
                         className="text-sm border rounded px-1">
-                        {[2024,2025,2026,2027].map(a => <option key={a} value={a}>{a}</option>)}
+                        {[2024, 2025, 2026, 2027].map(a => <option key={a} value={a}>{a}</option>)}
                     </select>
                 </div>
                 <button onClick={siguiente} className="text-gray-500 hover:text-[#5E0006]">›</button>
             </div>
             <div className="grid grid-cols-7 text-center text-xs text-gray-400 mb-1">
-                {['Su','Mo','Tu','We','Th','Fr','Sa'].map(d => <span key={d}>{d}</span>)}
+                {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(d => <span key={d}>{d}</span>)}
             </div>
             <div className="grid grid-cols-7 text-center text-sm gap-y-1">
                 {celdas.map((dia, i) => {
@@ -60,8 +60,8 @@ function Calendario({ onDiaClick, diaSeleccionado }) {
                     const nombreDia = fecha ? DIAS_MAP[fecha.getDay()] : null
                     const esHoy = dia === hoy.getDate() && mes === hoy.getMonth() && anio === hoy.getFullYear()
                     const esSeleccionado = diaSeleccionado?.dia === dia &&
-                                          diaSeleccionado?.mes === mes &&
-                                          diaSeleccionado?.anio === anio
+                        diaSeleccionado?.mes === mes &&
+                        diaSeleccionado?.anio === anio
                     const esFinde = nombreDia === 'sabado' || nombreDia === 'domingo'
 
                     return (
@@ -132,18 +132,18 @@ function ModalSalon({ clase, onClose }) {
 }
 
 function Home({ rol }) {
-    const [clases, setClases]         = useState([])
-    const [busqueda, setBusqueda]     = useState('')
+    const [clases, setClases] = useState([])
+    const [busqueda, setBusqueda] = useState('')
     const [seleccionado, setSeleccionado] = useState(null)
     const [modalClase, setModalClase] = useState(null)
     const [diaSeleccionado, setDiaSeleccionado] = useState(null)
 
     useEffect(() => {
         const token = localStorage.getItem('token')
-            fetch(`${API_URL}/api/horario`, { headers: getHeaders(token) })
-        .then(r => r.json())
-        .then(data => setClases(Array.isArray(data) ? data : []))
-        .catch(() => setClases([]))
+        fetch(`${API_URL}/api/horario`, { headers: getHeaders(token) })
+            .then(r => r.json())
+            .then(data => setClases(Array.isArray(data) ? data : []))
+            .catch(() => setClases([]))
     }, [])
 
     const ahora = new Date()
@@ -166,14 +166,16 @@ function Home({ rol }) {
         return matchBusqueda && matchDia
     })
 
-    const salonesUnicos = [...new Map(clasesFiltradas.map(c => [c.salon, c])).values()]
-
+    const salonesUnicos = diaSeleccionado
+        ? clases.filter(c => c.dia === diaSeleccionado.nombreDia)
+        : clases.filter(c => c.dia === diaActual)
+        
     const estaOcupado = (salon) => {
         return clases.some(c =>
             c.salon === salon &&
             c.dia === diaActual &&
-            horaActual >= c.hora_inicio.slice(0,5) &&
-            horaActual <= c.hora_fin.slice(0,5)
+            horaActual >= c.hora_inicio.slice(0, 5) &&
+            horaActual <= c.hora_fin.slice(0, 5)
         )
     }
 
@@ -181,8 +183,8 @@ function Home({ rol }) {
         return clases.find(c =>
             c.salon === salon &&
             c.dia === diaActual &&
-            horaActual >= c.hora_inicio.slice(0,5) &&
-            horaActual <= c.hora_fin.slice(0,5)
+            horaActual >= c.hora_inicio.slice(0, 5) &&
+            horaActual <= c.hora_fin.slice(0, 5)
         )
     }
 
@@ -195,7 +197,7 @@ function Home({ rol }) {
                 {/* Barra búsqueda */}
                 <div className="flex items-center bg-white rounded-full px-4 py-2 shadow gap-2">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#bdbdbd" strokeWidth="2">
-                        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                        <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
                     </svg>
                     <input
                         type="text"
@@ -242,9 +244,9 @@ function Home({ rol }) {
                                     </div>
                                     <span className={`text-xs px-3 py-1 rounded-full font-medium
                                         ${i % 4 === 0 ? 'bg-pink-100 text-pink-700' :
-                                          i % 4 === 1 ? 'bg-yellow-100 text-yellow-700' :
-                                          i % 4 === 2 ? 'bg-green-100 text-green-700' :
-                                                        'bg-blue-100 text-blue-700'}`}>
+                                            i % 4 === 1 ? 'bg-yellow-100 text-yellow-700' :
+                                                i % 4 === 2 ? 'bg-green-100 text-green-700' :
+                                                    'bg-blue-100 text-blue-700'}`}>
                                         {c.salon}
                                     </span>
                                     <div className="flex items-center gap-1">
@@ -267,12 +269,12 @@ function Home({ rol }) {
             <div className="flex flex-col gap-4 w-72">
                 <div className="flex items-center justify-end gap-3">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="2">
-                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                        <polyline points="22,6 12,13 2,6"/>
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                        <polyline points="22,6 12,13 2,6" />
                     </svg>
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="2">
-                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-                        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0" />
                     </svg>
                     <span className="text-sm font-bold text-gray-600">CECA</span>
                     <div className="w-9 h-9 rounded-full bg-[#5E0006] flex items-center justify-center text-white text-sm font-bold">A</div>

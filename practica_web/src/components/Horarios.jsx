@@ -148,12 +148,21 @@ function Horarios({ rol }) {
     const [materias, setMaterias] = useState([])
     const [modalDetalle, setModalDetalle] = useState(null)
     const [modalAnadir, setModalAnadir] = useState(false)
+    const [filtros, setFiltros] = useState({          // ← aquí
+        semestre: '', id_profesor: '', id_salon: '', dia: '', hora: ''
+    })
 
     const token = localStorage.getItem('token')
-    const headers = getHeaders(token)
 
     const cargarClases = () => {
-        fetch(`${API_URL}/api/horario`, { headers })
+        const params = new URLSearchParams()
+        if (filtros.semestre) params.append('semestre', filtros.semestre)
+        if (filtros.id_profesor) params.append('id_profesor', filtros.id_profesor)
+        if (filtros.id_salon) params.append('id_salon', filtros.id_salon)
+        if (filtros.dia) params.append('dia', filtros.dia)
+        if (filtros.hora) params.append('hora', filtros.hora)
+
+        fetch(`${API_URL}/api/horario?${params}`, { headers: getHeaders(token) })
             .then(r => r.json())
             .then(data => setClases(Array.isArray(data) ? data : []))
             .catch(() => setClases([]))
@@ -161,13 +170,17 @@ function Horarios({ rol }) {
 
     useEffect(() => {
         cargarClases()
+        fetch(`${API_URL}/api/profesores`, { headers: getHeaders(token) })
+            .then(r => r.json()).then(d => setProfesores(Array.isArray(d) ? d : []))
+        fetch(`${API_URL}/api/salones`, { headers: getHeaders(token) })
+            .then(r => r.json()).then(d => setSalones(Array.isArray(d) ? d : []))
         if (rol === 'administrador') {
-            fetch(`${API_URL}/api/profesores`, { headers: getHeaders(token) })
-            fetch(`${API_URL}/api/salones`, { headers: getHeaders(token) })
             fetch(`${API_URL}/api/grupos`, { headers: getHeaders(token) })
+                .then(r => r.json()).then(d => setGrupos(Array.isArray(d) ? d : []))
             fetch(`${API_URL}/api/materias`, { headers: getHeaders(token) })
+                .then(r => r.json()).then(d => setMaterias(Array.isArray(d) ? d : []))
         }
-    }, [])
+    }, [filtros])
 
     // Convierte clases de BD a eventos de FullCalendar
     const coloresEventos = ['#3b82f6', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444', '#ec4899']
@@ -219,6 +232,69 @@ function Horarios({ rol }) {
                     </button>
                 </div>
             )}
+
+            {/* Barra de filtros */}
+            <div className="bg-white rounded-2xl shadow p-4 flex gap-3 flex-wrap">
+                <select
+                    value={filtros.semestre}
+                    onChange={e => setFiltros({ ...filtros, semestre: e.target.value })}
+                    className="border rounded-lg px-3 py-2 text-sm"
+                >
+                    <option value="">Todos los semestres</option>
+                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(s => (
+                        <option key={s} value={s}>Semestre {s}</option>
+                    ))}
+                </select>
+
+                <select
+                    value={filtros.id_profesor}
+                    onChange={e => setFiltros({ ...filtros, id_profesor: e.target.value })}
+                    className="border rounded-lg px-3 py-2 text-sm"
+                >
+                    <option value="">Todos los profesores</option>
+                    {profesores.map(p => (
+                        <option key={p.num_cuenta} value={p.num_cuenta}>{p.nombre}</option>
+                    ))}
+                </select>
+
+                <select
+                    value={filtros.id_salon}
+                    onChange={e => setFiltros({ ...filtros, id_salon: e.target.value })}
+                    className="border rounded-lg px-3 py-2 text-sm"
+                >
+                    <option value="">Todos los salones</option>
+                    {salones.map(s => (
+                        <option key={s.id_salon} value={s.id_salon}>{s.nombre}</option>
+                    ))}
+                </select>
+
+                <select
+                    value={filtros.dia}
+                    onChange={e => setFiltros({ ...filtros, dia: e.target.value })}
+                    className="border rounded-lg px-3 py-2 text-sm"
+                >
+                    <option value="">Todos los días</option>
+                    <option value="lunes">Lunes</option>
+                    <option value="martes">Martes</option>
+                    <option value="miercoles">Miércoles</option>
+                    <option value="jueves">Jueves</option>
+                    <option value="viernes">Viernes</option>
+                </select>
+
+                <input
+                    type="time"
+                    value={filtros.hora}
+                    onChange={e => setFiltros({ ...filtros, hora: e.target.value })}
+                    className="border rounded-lg px-3 py-2 text-sm"
+                />
+
+                <button
+                    onClick={() => setFiltros({ semestre: '', id_profesor: '', id_salon: '', dia: '', hora: '' })}
+                    className="border rounded-lg px-3 py-2 text-sm text-gray-500 hover:text-[#5E0006] transition"
+                >
+                    Limpiar filtros
+                </button>
+            </div>
 
             {/* Calendario */}
             <div className="bg-white rounded-2xl shadow p-4 flex-1">
