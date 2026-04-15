@@ -18,15 +18,19 @@ function Dashboard() {
 
     return (
         <div className="flex h-screen bg-[#f0f0f0] overflow-hidden">
-
+            <div className="flex flex-col">
+               <img src={R} alt="UAEH" className="w-24 h-24 object-contain mb-2" />
             {/* Sidebar */}
-            <div className="w-44 bg-[#5E0006] flex flex-col items-start py-6 gap-2">
+            
+            <div className="w-44 bg-[#5E0006] flex flex-col items-start py-6 gap-2 rounded-lg h-[810px]  mb-3 ">
+                
                 <div className="px-4 mb-4">
-                    <img src={uaeh} alt="UAEH" className="w-16 h-16 object-contain" />
-                    <p className="text-white text-[10px] mt-1 leading-tight">
+                     
+                    <p className="text-white text-[10px] mt-1 leading-tight font-serif">
                         Universidad Autónoma<br />del Estado de Hidalgo
                     </p>
                 </div>
+            
 
                 {/* Tabs superiores */}
                 <div className="flex gap-2 px-4 mb-4">
@@ -88,6 +92,7 @@ function Dashboard() {
                     </svg>
                     Cerrar sesión
                 </button>
+                </div>
             </div>
 
             {/* Contenido principal */}
