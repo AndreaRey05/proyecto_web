@@ -4,14 +4,14 @@ import { useNavigate } from 'react-router-dom';
 import API_URL from '../config'
 
 function Login() {
-    const [modo, setModo] = useState('login');
-    const [ncuenta, setncuenta] = useState('');
-    const [nip, setnip] = useState('');
-    const [entrada, setEntrada] = useState('');
-    const [salida, setSalida] = useState('');
-    const [nombre, setNombre] = useState('');
-    const navigate = useNavigate();
-    const [email, setEmail] = useState('');
+    const [modo, setModo] = useState('login')
+    const [ncuenta, setncuenta] = useState('')
+    const [nip, setnip] = useState('')
+    const [entrada, setEntrada] = useState('')
+    const [salida, setSalida] = useState('')
+    const [nombre, setNombre] = useState('')
+    const navigate = useNavigate()
+    const [email, setEmail] = useState('')
 
     const handleSubmit = async (e) => {
         e.preventDefault()
