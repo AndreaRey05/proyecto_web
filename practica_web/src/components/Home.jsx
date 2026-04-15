@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import { useState, useEffect } from 'react'
 import API_URL, { getHeaders } from '../config'
 
@@ -7,6 +8,7 @@ function Calendario({ onDiaClick, diaSeleccionado }) {
     const hoy = new Date()
     const [mes, setMes] = useState(hoy.getMonth())
     const [anio, setAnio] = useState(hoy.getFullYear())
+    const [notificacionesEnviadas, setNotificacionesEnviadas] = useState({});
 
     const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
         'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
@@ -145,6 +147,45 @@ function Home({ rol }) {
             .then(data => setClases(Array.isArray(data) ? data : []))
             .catch(() => setClases([]))
     }, [])
+    useEffect(() => {
+        // Solo si es administrador
+        if (rol !== 'administrador') return;
+
+        const intervalId = setInterval(() => {
+            const ahora = new Date();
+            const diaActual = DIAS_MAP[ahora.getDay()];
+            const horaActualStr = ahora.toTimeString().slice(0, 5);
+
+            clases.forEach(clase => {
+                // Solo para el día actual
+                if (clase.dia !== diaActual) return;
+
+                // Obtener hora de fin de la clase
+                const horaFin = clase.hora_fin.slice(0, 5);
+
+                // Si la hora actual es mayor o igual a la hora de fin
+                if (horaActualStr >= horaFin) {
+                    // Si aún no hemos enviado notificación para esta clase
+                    if (!notificacionesEnviadas[clase.id_clase]) {
+                        toast.success(`✅ El salón ${clase.salon} está libre ahora.`, {
+                            duration: 10000,
+                        });
+                        // Marcar como notificada
+                        setNotificacionesEnviadas(prev => ({
+                            ...prev,
+                            [clase.id_clase]: true,
+                        }));
+                    }
+                } else {
+                    // Si la clase aún no ha terminado, permitir notificar en el futuro
+                    // (opcional: eliminar la marca cuando empiece la clase? pero no es necesario)
+                }
+            });
+        }, 60000); // verificar cada minuto
+
+        // Limpiar el intervalo al desmontar el componente
+        return () => clearInterval(intervalId);
+    }, [clases, notificacionesEnviadas, rol]);
 
     const ahora = new Date()
     const diaActual = DIAS_MAP[ahora.getDay()]
@@ -212,7 +253,7 @@ function Home({ rol }) {
                 <div className="bg-white rounded-2xl shadow p-6 text-center">
                     <h2 className="text-xl font-bold text-gray-700">Administración de Aulas</h2>
                     <p className="text-sm text-gray-400 mt-1">
-                            En CECA  somos responsables de administrar cada una de las aulas. Buscamos la cercanía entre los espacios educativos y nuestra comunidad garza.
+                        En CECA  somos responsables de administrar cada una de las aulas. Buscamos la cercanía entre los espacios educativos y nuestra comunidad garza.
                     </p>
                 </div>
 
