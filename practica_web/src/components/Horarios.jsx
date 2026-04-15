@@ -180,29 +180,38 @@ function Horarios({ rol }) {
             fetch(`${API_URL}/api/materias`, { headers: getHeaders(token) })
                 .then(r => r.json()).then(d => setMaterias(Array.isArray(d) ? d : []))
         }
+
     }, [filtros])
-
+    function stringToColor(str) {
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) {
+            hash = str.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        const hue = Math.abs(hash % 360);
+        return `hsl(${hue}, 90%, 45%)`;
+    }
     // Convierte clases de BD a eventos de FullCalendar
-    const coloresEventos = ['#3b82f6', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444', '#ec4899']
 
-    const eventos = clases.map((c, i) => {
-        const diaN = diaANumero[c.dia]
-        const fecha = new Date(2024, 0, 7 + diaN)
-        const fechaStr = fecha.toISOString().slice(0, 10)
+    const eventos = clases.map((c) => {
+        const diaN = diaANumero[c.dia];
+        const fecha = new Date(2024, 0, 7 + diaN);
+        const fechaStr = fecha.toISOString().slice(0, 10);
+        const color = stringToColor(c.profesor); // ✅ Define la variable color
         return {
             id: c.id_clase,
             title: c.materia,
             start: `${fechaStr}T${c.hora_inicio}`,
             end: `${fechaStr}T${c.hora_fin}`,
-            backgroundColor: coloresEventos[i % coloresEventos.length],
-            borderColor: 'transparent',
+            backgroundColor: color,   // ✅ Usa la variable
+            borderColor: color,       // ✅ Usa la variable
+            textColor: '#ffffff',
             extendedProps: {
                 profesor: c.profesor,
                 salon: c.salon,
                 grupo: c.grupo
             }
-        }
-    })
+        };
+    });
 
     const handleGuardar = async (form) => {
         const res = await fetch(`${API_URL}/api/horario`, {
@@ -297,8 +306,11 @@ function Horarios({ rol }) {
             </div>
 
             {/* Calendario */}
+
             <div className="bg-white rounded-2xl shadow p-4 flex-1">
+
                 <FullCalendar
+                    key={eventos.length}
                     plugins={[timeGridPlugin, dayGridPlugin, interactionPlugin]}
                     initialView="timeGridWeek"
                     initialDate="2024-01-08"

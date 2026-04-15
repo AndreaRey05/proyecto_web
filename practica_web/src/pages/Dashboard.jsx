@@ -20,14 +20,14 @@ function Dashboard() {
     return (
         <div className="flex h-screen bg-[#f0f0f0] overflow-hidden">
             <div className="flex flex-col">
-               <img src={R} alt="UAEH" className="w-24 h-24 object-contain mb-2" />
+               <img src={R} alt="UAEH" className="w-24 h-24 object-contain mb-2 ml-9" />
             {/* Sidebar */}
             
             <div className="w-44 bg-[#5E0006] flex flex-col items-start py-6 gap-2 rounded-lg h-[810px]  mb-3 ">
                 
                 <div className="px-4 mb-4">
                      
-                    <p className="text-white text-[10px] mt-1 leading-tight font-serif">
+                    <p className="text-white text-[10px] mt-1 leading-tight Poppins text-center ml-4">
                         Universidad Autónoma<br />del Estado de Hidalgo
                     </p>
                 </div>
@@ -35,9 +35,9 @@ function Dashboard() {
 
                 {/* Tabs superiores */}
                 <div className="flex gap-2 px-4 mb-4">
-                    <span className="text-white text-[10px] cursor-pointer hover:underline">ESTL</span>
-                    <span className="text-white text-[10px] cursor-pointer hover:underline">IS</span>
-                    <span className="text-white text-[10px] cursor-pointer hover:underline">SAESTL</span>
+                    <p className="text-white text-[10px] cursor-pointer hover:underline text-center ml-4 ">ESTL</p>
+                    <p className="text-white text-[10px] cursor-pointer hover:underline text-center ml-4">IS</p>
+                    <p className="text-white text-[10px] cursor-pointer hover:underline text-center ml-4">SAESTL</p>
                 </div>
 
                 {/* Menú */}
