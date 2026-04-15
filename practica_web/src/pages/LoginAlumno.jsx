@@ -46,8 +46,6 @@ function LoginAlumno() {
                     },
                     body: JSON.stringify({
                         num_cuenta: parseInt(ncuenta),
-                        nombre,
-                        email,
                         contra: nip
                     })
                 })
