@@ -14,7 +14,9 @@ const materiaRoutes = require('./routes/materiaRoutes')
 const app = express();
 
 // app.use(cors({ origin: 'http://localhost:5173' }));
-app.use(cors())
+app.use(cors({
+  origin: '*'  // permite cualquier origen
+}))
 app.use(express.json());
 
 app.use('/api/auth',    authRoutes);
