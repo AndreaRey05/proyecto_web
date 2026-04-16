@@ -39,4 +39,23 @@ router.delete('/:id', verifyToken, async (req, res) => {
     }
 })
 
+router.post('/', verifyToken, async (req, res) => {
+    if (req.user.rol !== 'administrador')
+        return res.status(403).json({ error: 'Sin permisos' })
+
+    const { nombre } = req.body
+    if (!nombre)
+        return res.status(400).json({ error: 'Nombre y semestre son requeridos' })
+
+    try {
+        const [result] = await db.query(
+            'INSERT INTO materia (nombre, semestre) VALUES (?, ?)', [nombre, semestre]
+        )
+        res.json({ id_materia: result.insertId, nombre, semestre })
+    } catch (error) {
+        console.error(error)
+        res.status(500).json({ error: 'Error al crear materia' })
+    }
+})
+
 module.exports = router
