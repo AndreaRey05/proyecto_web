@@ -137,6 +137,7 @@ function Home({ rol }) {
     const [seleccionado, setSeleccionado] = useState(null)
     const [modalClase, setModalClase] = useState(null)
     const [diaSeleccionado, setDiaSeleccionado] = useState(null)
+    const token = localStorage.getItem('token')
 
     useEffect(() => {
         const token = localStorage.getItem('token')
@@ -169,6 +170,7 @@ function Home({ rol }) {
     const salonesUnicos = diaSeleccionado
         ? clasesFiltradas.filter(c => c.dia === diaSeleccionado.nombreDia)
         : clasesFiltradas.filter(c => c.dia === diaActual)
+
 
     const estaOcupado = (salon) => {
         return clases.some(c =>
@@ -232,7 +234,21 @@ function Home({ rol }) {
                             const claseAhora = claseActual(c.salon)
                             return (
                                 <div key={i}
-                                    onClick={() => setSeleccionado(c)}
+                                    onClick={async () => {
+                                        setSeleccionado(c);
+                                        // Obtener email desde el endpoint de profesores
+                                        try {
+                                            const res = await fetch(`${API_URL}/api/profesores/${c.num_cuenta}`, {
+                                                headers: getHeaders(token)
+                                            });
+                                            const data = await res.json();
+                                            if (data.email) {
+                                                setSeleccionado(prev => ({ ...prev, email: data.email }));
+                                            }
+                                        } catch (err) {
+                                            console.error('Error al obtener email:', err);
+                                        }
+                                    }}
                                     className="flex items-center justify-between bg-gray-50 rounded-xl px-4 py-3 hover:bg-gray-100 transition cursor-pointer">
                                     <div className="flex items-center gap-3 w-48">
                                         <div className="w-9 h-9 rounded-full bg-[#5E0006] flex items-center justify-center text-white text-sm font-bold">
@@ -278,35 +294,34 @@ function Home({ rol }) {
                 {/* Detalle profesor seleccionado */}
                 {seleccionado && (
                     <>
-                    {console.log('seleccionado:', seleccionado)}
-                    <div className="bg-white rounded-2xl shadow p-4 flex flex-col items-center gap-2">
-                        <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center text-2xl">👤</div>
-                        <p className="text-sm font-bold text-gray-700">{seleccionado.profesor}</p>
-                        
-                        <div className="flex gap-3 text-gray-400">
+                        {console.log('seleccionado:', seleccionado)}
+                        <div className="bg-white rounded-2xl shadow p-4 flex flex-col items-center gap-2">
+                            <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center text-2xl">👤</div>
+                            <p className="text-sm font-bold text-gray-700">{seleccionado.profesor}</p>
 
-                            {/* agregar correo */}
-                            {/* Mostrar correo */}
-                            <div className="flex items-center gap-1 text-xs text-gray-500">
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                                    <polyline points="22,6 12,13 2,6" />
-                                </svg>
-                                <span>{seleccionado.email || 'Correo no registrado'}</span>
-                            </div>
+                            <div className="flex gap-3 text-gray-400">
 
-                        </div>
-                        <div className="w-full text-sm mt-2 flex flex-col gap-1">
-                            <div className="flex justify-between">
-                                <span className="text-gray-400">Ubicación</span>
-                                <span className="font-medium">{seleccionado.salon}</span>
+                                {/* agregar correo */}
+                                {/* Mostrar correo */}
+                                <div className="flex items-center gap-1 text-xs text-gray-500">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                                        <polyline points="22,6 12,13 2,6" />
+                                    </svg>
+                                    <span>{seleccionado?.email ? seleccionado.email : 'No registrado'}</span>                            </div>
+
                             </div>
-                            <div className="flex justify-between">
-                                <span className="text-gray-400">Turno</span>
-                                <span className="font-medium">{seleccionado.hora_entrada} - {seleccionado.hora_salida}</span>
+                            <div className="w-full text-sm mt-2 flex flex-col gap-1">
+                                <div className="flex justify-between">
+                                    <span className="text-gray-400">Ubicación</span>
+                                    <span className="font-medium">{seleccionado.salon}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="text-gray-400">Turno</span>
+                                    <span className="font-medium">{seleccionado.hora_entrada} - {seleccionado.hora_salida}</span>
+                                </div>
                             </div>
-                        </div>
-                    </div></>
+                        </div></>
                 )}
             </div>
 
