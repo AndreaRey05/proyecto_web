@@ -4,7 +4,8 @@ import uaeh from '../assets/uaeh.png'
 import Home from '../components/Home'
 import Profesores from '../components/Profesores'
 import Horarios from '../components/Horarios'
-import Materias from '../components/Materias'
+import Materias from '../components/Materias'  // ← Única importación, ruta correcta
+import Grupos from '../components/Grupos'
 import R from '../assets/R.png'
 
 function Dashboard() {
@@ -41,11 +42,24 @@ function Dashboard() {
                         <p className="text-white text-[10px] cursor-pointer hover:underline text-center ml-4">SAESTL</p>
                     </div>
 
+                    <div className="px-4 mb-4">
+                        <p className="text-white text-[10px] mt-1 leading-tight Poppins text-center ml-4">
+                            Universidad Autónoma<br />del Estado de Hidalgo
+                        </p>
+                    </div>
+
+                    {/* Tabs superiores */}
+                    <div className="flex gap-2 px-4 mb-4">
+                        <p className="text-white text-[10px] cursor-pointer hover:underline text-center ml-4">ESTL</p>
+                        <p className="text-white text-[10px] cursor-pointer hover:underline text-center ml-4">IS</p>
+                        <p className="text-white text-[10px] cursor-pointer hover:underline text-center ml-4">SAESTL</p>
+                    </div>
+
                     {/* Menú */}
                     <button
                         onClick={() => setSeccion('home')}
                         className={`w-full flex items-center gap-3 px-6 py-3 text-white font-bold text-sm tracking-wide transition
-                        ${seccion === 'home' ? 'bg-white/20 border-l-4 border-white' : 'hover:bg-white/10'}`}
+                            ${seccion === 'home' ? 'bg-white/20 border-l-4 border-white' : 'hover:bg-white/10'}`}
                     >
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
@@ -129,6 +143,8 @@ function Dashboard() {
                 {seccion === 'home' && <Home rol={rol} />}
                 {seccion === 'profesores' && <Profesores rol={rol} />}
                 {seccion === 'horarios' && <Horarios rol={rol} />}
+                {seccion === 'Materias' && <Materias rol={rol} />}  {/* ← Agregado */}
+                {seccion === 'Grupos' && <Grupos rol={rol} />}
             </div>
         </div>
     )
