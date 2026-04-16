@@ -133,6 +133,7 @@ function Dashboard() {
                 {seccion === 'horarios' && <Horarios rol={rol} />}
                 {seccion === 'Materias' && <Materias rol={rol} />}  {/* ← Agregado */}
                 {seccion === 'Grupos' && <Grupos rol={rol} />}
+
             </div>
         </div>
     )
