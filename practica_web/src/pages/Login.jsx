@@ -3,6 +3,8 @@ import uaeh from '../assets/uaeh.png';
 import { useNavigate } from 'react-router-dom';
 import API_URL from '../config'
 
+console.log('API_URL:', API_URL);
+
 function Login() {
     const [modo, setModo] = useState('login')
     const [ncuenta, setncuenta] = useState('')
@@ -20,7 +22,10 @@ function Login() {
             try {
                 const res = await fetch(`${API_URL}/api/auth/login`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'ngrok-skip-browser-warning': 'true'
+                    },
                     body: JSON.stringify({
                         num_cuenta: parseInt(ncuenta),
                         contra: nip,
