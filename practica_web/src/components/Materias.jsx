@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import API_URL, { getHeaders } from '../config'
 
 function Materias({ rol }) {
-    const [Materias, setMaterias] = useState([])
+    const [materias, setMaterias] = useState([])
     const [busqueda, setBusqueda] = useState('')
     const [seleccionado, setSeleccionado] = useState(null)
     const [modalEliminar, setModalEliminar] = useState(null)
@@ -10,13 +10,8 @@ function Materias({ rol }) {
     const [errorContra, setErrorContra] = useState('')
 
     const token = localStorage.getItem('token')
-    const headers = {
-        Authorization: `Bearer ${token}`,
-        'ngrok-skip-browser-warning': 'true'
-    }
 
     useEffect(() => {
-        const token = localStorage.getItem('token')
         fetch(`${API_URL}/api/materias`, { headers: getHeaders(token) })
             .then(r => r.json())
             .then(data => setMaterias(Array.isArray(data) ? data : []))
@@ -50,8 +45,8 @@ function Materias({ rol }) {
             setErrorContra(data.error)
             return
         }
-        setMaterias(prev => prev.filter(m => m.id !== modalEliminar))
-        if (seleccionado?.id === modalEliminar) setSeleccionado(null)
+        setMaterias(prev => prev.filter(m => m.id_materia !== modalEliminar))
+        if (seleccionado?.id_materia === modalEliminar) setSeleccionado(null)
         setModalEliminar(null)
     }
 
@@ -77,35 +72,35 @@ function Materias({ rol }) {
                 <div className="grid grid-cols-5 gap-4 overflow-auto">
                     {filtrados.length === 0 && (
                         <p className="text-gray-400 text-sm col-span-5 text-center py-8">
-                            No hay Materias registrados
+                            No hay materias registradas
                         </p>
                     )}
                     {filtrados.map((m, i) => (
                         <div
                             key={m.id}
-                            onClick={() => setSeleccionado(p)}
+                            onClick={() => setSeleccionado(m)}
                             className={`${colores[i % colores.length]} rounded-2xl p-4 flex flex-col items-center gap-2 cursor-pointer hover:shadow-md transition relative`}
                         >
                             {rol === 'administrador' && (
                                 <button
-                                    onClick={e => { e.stopPropagation(); handleEliminar(m.id) }}
+                                    onClick={e => { e.stopPropagation(); handleEliminar(m.id_materia) }}
                                     className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs font-bold"
                                 >
                                     ✕
                                 </button>
                             )}
                             <div className="w-16 h-16 rounded-full bg-white/60 flex items-center justify-center text-3xl">
-                                👤
+                                📚
                             </div>
-                            <p className="text-xs font-bold text-gray-700 text-center truncate w-full text-center">
-                                {p.nombre}
+                            <p className="text-xs font-bold text-gray-700 text-center truncate w-full">
+                                {m.nombre}
                             </p>
                         </div>
                     ))}
                 </div>
             </div>
 
-            {/* Modal detalle profesor */}
+            {/* Modal detalle materia */}
             {seleccionado && (
                 <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
                     <div className="bg-white rounded-2xl shadow-xl p-6 w-80 relative flex flex-col items-center gap-3">
@@ -114,36 +109,18 @@ function Materias({ rol }) {
                             className="absolute top-3 right-4 text-gray-400 hover:text-gray-700 text-xl"
                         >✕</button>
                         <div className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center text-4xl">
-                            👤
+                            📚
                         </div>
-                        <p className="font-bold text-gray-800 text-lg">{seleccionado.nombre}</p>
-                        <p className="text-xs text-gray-400">Email: {seleccionado.email}</p>
-                        <div className="w-full text-sm flex flex-col gap-2 mt-2">
-                            <div className="flex justify-between border-b pb-2">
-                                <span className="text-gray-400">Turno</span>
-                                <span className="font-medium">
-                                    {seleccionado.hora_entrada} - {seleccionado.hora_salida}
-                                </span>
-                                <span className="text-gray-400">Horas libres</span>
-                                <span className="font-medium">
-                                    {/* Aquí podrías mostrar las horas libres obtenidas del backend */}
-                                </span>
-                                <span className="text-gray-400">Materias</span>
-                                <span className="font-medium">
-                                    {[...new Set(profesores
-                                        .filter(p => p.num_cuenta === seleccionado.num_cuenta)
-                                        .map(p => p.materia)
-                                    )].join(', ') || 'Sin materias'}
-                                </span>
-
-                            </div>
-                        </div>
+                        <p className="font-bold text-gray-800 text-lg text-center">{seleccionado.nombre}</p>
                         {rol === 'administrador' && (
                             <button
-                                onClick={() => handleEliminar(seleccionado.num_cuenta)}
+                                onClick={() => {
+                                    setSeleccionado(null)
+                                    handleEliminar(seleccionado.id)
+                                }}
                                 className="mt-2 bg-red-500 text-white px-6 py-2 rounded-lg text-sm font-bold hover:bg-red-600 transition w-full"
                             >
-                                Eliminar Profesor
+                                Eliminar Materia
                             </button>
                         )}
                     </div>
@@ -181,4 +158,4 @@ function Materias({ rol }) {
     )
 }
 
-export default Profesores
+export default Materias
