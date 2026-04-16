@@ -14,7 +14,7 @@ function Dashboard() {
 
     // Definir qué secciones puede ver cada rol
     const seccionesPermitidas = {
-        alumno: ['home','Profesores', 'horarios'],  
+        alumno: ['home','profesores', 'horarios'],  
         profesor: ['home', 'profesores', 'horarios', 'Materias'],
         administrador: ['home', 'profesores', 'horarios', 'Materias', 'Grupos']
     }
