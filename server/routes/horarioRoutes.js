@@ -7,7 +7,6 @@ const { getHorario, addClase } = require('../controllers/horarioController');
 router.get('/',  verifyToken, getHorario);
 router.post('/', verifyToken, addClase);
 
-
 router.delete('/:id', verifyToken, async (req, res) => {
     const { id } = req.params
     
