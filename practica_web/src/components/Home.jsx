@@ -234,21 +234,7 @@ function Home({ rol }) {
                             const claseAhora = claseActual(c.salon)
                             return (
                                 <div key={i}
-                                    onClick={async () => {
-                                        setSeleccionado(c);
-                                        // Obtener email desde el endpoint de profesores
-                                        try {
-                                            const res = await fetch(`${API_URL}/api/profesores/${c.num_cuenta}`, {
-                                                headers: getHeaders(token)
-                                            });
-                                            const data = await res.json();
-                                            if (data.email) {
-                                                setSeleccionado(prev => ({ ...prev, email: data.email }));
-                                            }
-                                        } catch (err) {
-                                            console.error('Error al obtener email:', err);
-                                        }
-                                    }}
+                                    onClick={() => setSeleccionado(c)}
                                     className="flex items-center justify-between bg-gray-50 rounded-xl px-4 py-3 hover:bg-gray-100 transition cursor-pointer">
                                     <div className="flex items-center gap-3 w-48">
                                         <div className="w-9 h-9 rounded-full bg-[#5E0006] flex items-center justify-center text-white text-sm font-bold">
@@ -308,7 +294,8 @@ function Home({ rol }) {
                                         <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
                                         <polyline points="22,6 12,13 2,6" />
                                     </svg>
-                                    <span>{seleccionado?.email ? seleccionado.email : 'No registrado'}</span>                            </div>
+                                    <span>{seleccionado?.email ? seleccionado.email : 'No registrado'}</span>
+                                </div>
 
                             </div>
                             <div className="w-full text-sm mt-2 flex flex-col gap-1">

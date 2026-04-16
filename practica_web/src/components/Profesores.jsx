@@ -139,9 +139,8 @@ function Profesores({ rol }) {
                             {/* Email */}
                             <div className="flex justify-between items-center border-b pb-2">
                                 <span className="text-gray-400">Email</span>
-                                <span className="font-medium text-gray-700">{seleccionado.email || 'No registrado'}</span>
-                            </div>
-
+                                <span>{seleccionado?.email ? seleccionado.email : 'No registrado'}</span>                            </div>
+                            
                             {/* Turno */}
                             <div className="flex justify-between items-center border-b pb-2">
                                 <span className="text-gray-400">Turno</span>
