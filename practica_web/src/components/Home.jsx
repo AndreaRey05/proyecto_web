@@ -247,12 +247,7 @@ function Home({ rol }) {
                                                     'bg-blue-100 text-blue-700'}`}>
                                         {c.salon}
                                     </span>
-                                    <div className="flex items-center gap-1">
-                                        <span className={`w-2 h-2 rounded-full ${ocupado ? 'bg-red-500' : 'bg-green-500'}`}></span>
-                                        <span className={`text-xs font-medium ${ocupado ? 'text-red-500' : 'text-green-500'}`}>
-                                            {ocupado ? 'Ocupado' : 'Disponible'}
-                                        </span>
-                                    </div>
+
                                     <button
                                         onClick={e => { e.stopPropagation(); setModalClase(claseAhora || c) }}
                                         className="text-gray-400 hover:text-[#5E0006] text-lg">⋮</button>
@@ -286,9 +281,17 @@ function Home({ rol }) {
                         <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center text-2xl">👤</div>
                         <p className="text-sm font-bold text-gray-700">{seleccionado.profesor}</p>
                         <div className="flex gap-3 text-gray-400">
-                            <span className="cursor-pointer hover:text-[#5E0006]">📞</span>
-                            <span className="cursor-pointer hover:text-[#5E0006]">💬</span>
-                            <span className="cursor-pointer hover:text-[#5E0006]">✉️</span>
+
+                            {/* agregar correo */}
+                            {/* Mostrar correo */}
+                            <div className="flex items-center gap-1 text-xs text-gray-500">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                                    <polyline points="22,6 12,13 2,6" />
+                                </svg>
+                                <span>{seleccionado.email || 'Correo no registrado'}</span>
+                            </div>
+
                         </div>
                         <div className="w-full text-sm mt-2 flex flex-col gap-1">
                             <div className="flex justify-between">
