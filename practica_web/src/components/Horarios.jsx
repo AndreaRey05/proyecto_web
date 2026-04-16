@@ -8,6 +8,7 @@ import API_URL, { getHeaders } from '../config'
 function ModalDetalle({ clase, onClose }) {
     if (!clase) return null
     return (
+
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
             <div className="bg-white rounded-2xl shadow-xl p-6 w-80 relative">
                 <button onClick={onClose}
@@ -17,6 +18,10 @@ function ModalDetalle({ clase, onClose }) {
                     <div>
                         <p className="text-gray-400 text-xs">Profesor asignado</p>
                         <p className="font-semibold">{clase.extendedProps?.profesor}</p>
+                    </div>
+                    <div>
+                        <p className="text-gray-400 text-xs">Correo</p>
+                        <p className="font-semibold">{clase.extendedProps?.email || 'No registrado'}</p>
                     </div>
                     <div>
                         <p className="text-gray-400 text-xs">Horario</p>
@@ -32,6 +37,7 @@ function ModalDetalle({ clase, onClose }) {
                         <p className="text-gray-400 text-xs">Grupo</p>
                         <p className="font-semibold">{clase.extendedProps?.grupo}</p>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -240,7 +246,8 @@ function Horarios({ rol }) {
             extendedProps: {
                 profesor: c.profesor,
                 salon: c.salon,
-                grupo: c.grupo
+                grupo: c.grupo,
+                email: c.email
             }
         };
     });
@@ -372,7 +379,7 @@ function Horarios({ rol }) {
                             const confirmar = window.confirm(`¿Eliminar la clase "${info.event.title}"?`);
                             if (confirmar) {
                                 const idClase = info.event.id;
-                                
+
                                 fetch(`${API_URL}/api/horario/${info.event.id}`, {
                                     method: 'DELETE',                     // ← método HTTP correcto
                                     headers: getHeaders(token)            // sin body, no necesita Content-Type

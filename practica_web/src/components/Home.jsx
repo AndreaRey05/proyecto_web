@@ -277,9 +277,12 @@ function Home({ rol }) {
 
                 {/* Detalle profesor seleccionado */}
                 {seleccionado && (
+                    <>
+                    {console.log('seleccionado:', seleccionado)}
                     <div className="bg-white rounded-2xl shadow p-4 flex flex-col items-center gap-2">
                         <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center text-2xl">👤</div>
                         <p className="text-sm font-bold text-gray-700">{seleccionado.profesor}</p>
+                        
                         <div className="flex gap-3 text-gray-400">
 
                             {/* agregar correo */}
@@ -303,7 +306,7 @@ function Home({ rol }) {
                                 <span className="font-medium">{seleccionado.hora_entrada} - {seleccionado.hora_salida}</span>
                             </div>
                         </div>
-                    </div>
+                    </div></>
                 )}
             </div>
 
