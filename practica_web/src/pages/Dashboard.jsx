@@ -42,18 +42,6 @@ function Dashboard() {
                         <p className="text-white text-[10px] cursor-pointer hover:underline text-center ml-4">SAESTL</p>
                     </div>
 
-                    <div className="px-4 mb-4">
-                        <p className="text-white text-[10px] mt-1 leading-tight Poppins text-center ml-4">
-                            Universidad Autónoma<br />del Estado de Hidalgo
-                        </p>
-                    </div>
-
-                    {/* Tabs superiores */}
-                    <div className="flex gap-2 px-4 mb-4">
-                        <p className="text-white text-[10px] cursor-pointer hover:underline text-center ml-4">ESTL</p>
-                        <p className="text-white text-[10px] cursor-pointer hover:underline text-center ml-4">IS</p>
-                        <p className="text-white text-[10px] cursor-pointer hover:underline text-center ml-4">SAESTL</p>
-                    </div>
 
                     {/* Menú */}
                     <button
