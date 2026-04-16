@@ -8,7 +8,6 @@ function Grupos({ rol }) {
     const [busqueda, setBusqueda] = useState('')
     const [seleccionado, setSeleccionado] = useState(null)
     const [modalCrear, setModalCrear] = useState(false)
-    const [modalEditar, setModalEditar] = useState(null)
     const [modalEliminar, setModalEliminar] = useState(null)
     const [modalTutor, setModalTutor] = useState(null)
     const [contrasena, setContrasena] = useState('')
@@ -53,16 +52,6 @@ function Grupos({ rol }) {
         setNuevoGrupo({ nombre: '', semestre: '' })
     }
 
-    const handleEditar = async () => {
-        const res = await fetch(`${API_URL}/api/grupos/${modalEditar.id_grupo}`, {
-            method: 'PUT',
-            headers: getHeaders(token, true),
-            body: JSON.stringify({ nombre: modalEditar.nombre, semestre: modalEditar.semestre })
-        })
-        if (!res.ok) return
-        setGrupos(prev => prev.map(g => g.id_grupo === modalEditar.id_grupo ? { ...g, ...modalEditar } : g))
-        setModalEditar(null)
-    }
 
     const handleAsignarTutor = async () => {
         const res = await fetch(`${API_URL}/api/grupos/${modalTutor.id_grupo}/tutor`, {
@@ -185,10 +174,6 @@ function Grupos({ rol }) {
                         </p>
                         <div className="flex flex-col gap-2 w-full mt-2">
                             <button
-                                onClick={() => { setModalEditar({ ...seleccionado }); setSeleccionado(null) }}
-                                className="bg-blue-500 text-white py-2 rounded-lg text-sm font-bold hover:bg-blue-600 transition w-full"
-                            >Editar grupo</button>
-                            <button
                                 onClick={() => { setModalTutor(seleccionado); setTutorSeleccionado(''); setSeleccionado(null) }}
                                 className="bg-green-500 text-white py-2 rounded-lg text-sm font-bold hover:bg-green-600 transition w-full"
                             >Asignar tutor</button>
@@ -223,33 +208,6 @@ function Grupos({ rol }) {
                         <button onClick={handleCrear}
                             className="bg-[#5E0006] text-white py-2 rounded-lg font-bold text-sm hover:bg-red-800 transition">
                             Crear
-                        </button>
-                    </div>
-                </div>
-            )}
-
-            {/* Modal editar */}
-            {modalEditar && (
-                <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-2xl shadow-xl p-6 w-80 relative flex flex-col gap-4">
-                        <button onClick={() => setModalEditar(null)}
-                            className="absolute top-3 right-4 text-gray-400 hover:text-gray-700 text-xl">✕</button>
-                        <h2 className="font-bold text-lg text-[#5E0006]">Editar Grupo</h2>
-                        <input
-                            type="text" placeholder="Nombre"
-                            value={modalEditar.nombre}
-                            onChange={e => setModalEditar(p => ({ ...p, nombre: e.target.value }))}
-                            className="border rounded-lg px-3 py-2 text-sm"
-                        />
-                        <input
-                            type="number" placeholder="Semestre"
-                            value={modalEditar.semestre}
-                            onChange={e => setModalEditar(p => ({ ...p, semestre: e.target.value }))}
-                            className="border rounded-lg px-3 py-2 text-sm"
-                        />
-                        <button onClick={handleEditar}
-                            className="bg-blue-500 text-white py-2 rounded-lg font-bold text-sm hover:bg-blue-600 transition">
-                            Guardar cambios
                         </button>
                     </div>
                 </div>
